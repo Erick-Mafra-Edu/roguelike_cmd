@@ -56,7 +56,6 @@ void definedMap(map &currentMap, short int newMap[16][16])
 }
 
 
-<<<<<<< HEAD
 void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
 {
     if (mapCurrent.enemyList)
@@ -113,8 +112,6 @@ void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
         }
     }
 }
-=======
->>>>>>> d67747a068484470967291d9273ddd5d7942fb42
 
 void printMap(map &mapCurrent)
 {
