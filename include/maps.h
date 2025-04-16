@@ -3,38 +3,14 @@
 #include <ctime>
 #include <windows.h>
 
-struct Seed
-{
-    int loc[5][5];
-};
-void generateSeed(Seed &seed)
-{
+int Seed(int y, int x,int seed){
+    seed = (y*983)+(x*797)+(seed*929);
+    seed = seed % 13+1;
+    return seed;//selectMap
+}
+int generateSeed(){
     srand(time(NULL));
-
-    for (short int i = 0; i < 5; i++)
-    {
-        for (short int j = 0; j < 5; j++)
-        {
-            if (i == 2 && j == 2)
-            {
-                seed.loc[i][j] = rand() % 4 + 1;
-            }
-            else
-            {
-                do
-                {
-                    seed.loc[i][j] = rand() % 13 + 1;
-                } while (seed.loc[i][j] <= 4);
-            }
-        }
-    }
-
-    // for (short int i = 0; i < 5; i++){
-    //     for (short int j = 0; j < 5; j++){
-    //      cout<<seed[i][j]<<",";
-    //     }
-    //     cout<<endl;
-    //  }
+    return rand()%999999;
 }
 int enemyHealth =10,enemyDamage=10;
 void definedMap(map &currentMap, short int newMap[16][16])
@@ -181,23 +157,22 @@ void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
             }
             }
         }
+        
+        // if(mapCurrent.boss){
+        //     mapCurrent.clearEnemyRoom();
+        //     SetConsoleCursorPosition(hConsole, {0, 0});
+        //     printMap(mapCurrent);
+        //     mapCurrent.map[5][5] = mapCurrent.entities::enemy;
+        //     mapCurrent.enemyList[0] = enemy();
+        //     mapCurrent.enemyList[0].health=20;
+        //     mapCurrent.enemyList[0].c = 'D';
+        //     mapCurrent.enemyList[0].position = {(short)5, (short)5};
+        //     mapCurrent.boss = false;
+        // }
     }
 
-    if(mapCurrent.boss){
-        mapCurrent.clearEnemyRoom();
-        SetConsoleCursorPosition(hConsole, {0, 0});
-        printMap(mapCurrent);
-        mapCurrent.map[5][5] = mapCurrent.entities::enemy;
-        mapCurrent.enemyList[0] = enemy();
-        mapCurrent.enemyList[0].health=20;
-        mapCurrent.enemyList[0].c = 'D';
-        mapCurrent.enemyList[0].position = {(short)5, (short)5};
-        mapCurrent.boss = false;
-    }
 
-}
-
-void mapa(map &newMap,int mapSelect)
+void mapa(map &newMap,short int mapSelect)
 {
     newMap.spawnPos[map::bottom] = {5, 5};
     newMap.enemy; // Inimigo = Número 2
