@@ -73,7 +73,7 @@ struct Game
 {
     Player player;
     map map;
-    Seed seed;
+    int seed;
     enum ReturnTypes
     {
         exit,
@@ -174,7 +174,8 @@ void hudPrint(Player player, int points){
 void loopPlayer(Game &gameSaved)
 {
     int StartTime = time(NULL);
-    Seed seed;
+    int seed;
+    short int SelectMap;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     map mapCurrent;
     COORD newPosition;
@@ -199,9 +200,10 @@ void loopPlayer(Game &gameSaved)
     }
     else
     {
-        generateSeed(seed);
+        seed = generateSeed();
+        SelectMap = Seed(0,0,seed);
         // selecionando a sala inicial
-        mapa(mapCurrent,seed.loc[2][2]);
+        mapa(mapCurrent,SelectMap);
         // map mapCurrent = mapa(3);
         printMap(mapCurrent);
         currentPosition = {3, 3};
@@ -219,7 +221,7 @@ void loopPlayer(Game &gameSaved)
     while ( gameSaved.returnType != Game::exit && gameSaved.returnType != Game::inventory)
     {
         
-        if (armadilha){//se a armdilha foi ativado avisa que está no proximo movimento pós armadilha
+        if (armadilha){//se a armadilha foi ativado avisa que está no proximo movimento pós armadilha
             passado = true;
         }
         
@@ -293,38 +295,41 @@ void loopPlayer(Game &gameSaved)
                 //newPosition = currentPosition; // volta se tiver parede ou obstáculo
                 break;
             case mapCurrent.entities::portaSupInf:
-                if (newPosition.Y > 0 && inMap.y < 4)
+                if (newPosition.Y > 0)
                 {
                     /*logic to select next map on bottom*/
                     swapMap = true;
                     inMap.y++;
-                    mapa(mapCurrent,seed.loc[inMap.y][inMap.x]);
+                    SelectMap = Seed(inMap.y,inMap.x,seed);
+                    mapa(mapCurrent,SelectMap);
                     currentPosition = {2, 2};
                 }
-                else if (inMap.y > 1)
-                {
+                else{
                     /* return to before room if has in room 5S*/
                     swapMap = true;
                     inMap.y--;
-                    mapa(mapCurrent,seed.loc[inMap.y][inMap.x]);
+                    SelectMap = Seed(inMap.y,inMap.x,seed);
+                    mapa(mapCurrent,SelectMap);
                     currentPosition = {2, 2};
                 }
                 break;
             case mapCurrent.entities::portaLat:
-                if (newPosition.X > 0 && inMap.x < 4)
+                if (newPosition.X > 0)
                 {
                     /*logic to select next map on right*/
                     swapMap = true;
                     inMap.x++;
-                    mapa(mapCurrent,seed.loc[inMap.y][inMap.x]);
+                    SelectMap = Seed(inMap.y,inMap.x,seed);
+                    mapa(mapCurrent,SelectMap);
                     currentPosition = {2, 2};
                 }
-                else if (inMap.x > 1)
+                else
                 {
                     /* return to before room if has in room 5S*/
                     swapMap = true;
                     inMap.x--;
-                    mapa(mapCurrent,seed.loc[inMap.y][inMap.x]);
+                    SelectMap = Seed(inMap.y,inMap.x,seed);
+                    mapa(mapCurrent,SelectMap);
                     currentPosition = {2, 2};
                 }
                 break;
@@ -448,7 +453,21 @@ void loopPlayer(Game &gameSaved)
                             break;
                     }
                     SetConsoleCursorPosition(hConsole, {(SHORT)20, (SHORT)20});
-                    cout << player.inventory.items[player.inventory.size - 1].art;
+                    string tipoItem;
+                    switch (player.inventory.items[player.inventory.size-1].type)
+                    {
+                    case Items::weapon:
+                        tipoItem = "Arma";
+                        break;
+                    case Items::armor:
+                        tipoItem = "Escudo";
+                        break;
+                    case Items::consumables:
+                        tipoItem = "Consumível";
+                        break;
+                    }
+                    cout << "Você encontrou um novo Item do tipo:"+tipoItem;
+                   
                     break;
                 }
                 break;
