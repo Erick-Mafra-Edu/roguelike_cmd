@@ -4,6 +4,7 @@
 #include "./include/player.h"
 #include "./include/menu.h"
 #include "./include/itemsmenu.h"
+#include "./include/victory.h"
 #include <locale.h>
 
 using namespace std;
@@ -56,13 +57,23 @@ int main()
     game.returnType = Game::start;
     do
     {
+        if (game.returnType == Game::victory)
+        {
+            drawVictoryScreen();
+            game = Game();
+            game.player = Player();
+            game.returnType = Game::start;
+        }
+        
         if (game.returnType == Game::inventory){
                 ItemsMenu(game.player.inventory,game.player);
-                cout<<game.returnType;
+                //cout<<game.returnType;
                 game.returnType = Game::saved;
         }else if (game.returnType == Game::exit)
         {
-           game.returnType = Game::start;
+            game = Game();
+            game.player = Player();
+            game.returnType = Game::start;
         }
         game.returnType == Game::saved ? selectMenu = 0 : selectMenu = menu();
         switch (selectMenu)
@@ -86,7 +97,8 @@ int main()
             cout << "- '\u2588' são paredes (você não pode passar delas).\n";
             cout << "- '|' e '-' são portas.\n\n";
             cout << "Objetivo: Sobreviva ao máximo de tempo possível (quanto mais tempo se passa dentro da dungeon, mais difícil fica), \n";
-            cout << "mate o máximo de inimigos possíveis e derrote o Boss para conseguir a maior quantidade de pontos possível\n\n";
+            cout << "mate o máximo de inimigos possíveis e derrote o Boss para conseguir a maior quantidade de pontos possível.\n";
+            cout << "Cálculo de pontos: tempo + abates + boss.\n\n";
             cout << "Pressione qualquer tecla para retornar ao menu...";
             getch(); // Aguardando uma tecla ser pressionada
             break;

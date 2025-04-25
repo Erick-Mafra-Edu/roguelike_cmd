@@ -3,6 +3,7 @@
 
 using namespace std;
 
+// Criação dos itens, usado para se fazer os itens para o jogo
 struct Items
 {
     enum TypeofItems

@@ -89,7 +89,7 @@ int menu()
         case 72:
         case 'w':
             Beep(1300, 20);
-            Sleep(10); // pequena pausa
+            // Sleep(10); // pequena pausa
             Beep(900, 20);
             // cout<<"Up";
             position <= 0 ? position = 2 : position--;
@@ -97,7 +97,7 @@ int menu()
         case 80:
         case 's':
             Beep(1300, 20);
-            Sleep(10); // pequena pausa
+            // Sleep(10); // pequena pausa
             Beep(900, 20);
             // cout<<"Down";
             position >= 2 ? position = 0 : position++;

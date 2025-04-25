@@ -1,0 +1,2 @@
+//Recurso que Adiciona icone ao executavel
+IDI_ICON1 ICON "./roguelike.ico"

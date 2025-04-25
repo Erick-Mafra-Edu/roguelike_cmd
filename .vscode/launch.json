@@ -15,7 +15,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "D:\\MainTest\\roguelike_cmd\\mygame.exe",
+            "program": "D:\\roguelike_cmd\\mygame.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

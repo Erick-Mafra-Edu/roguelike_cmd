@@ -3,10 +3,11 @@
 #include "./maps.h"
 #include "./items.h"
 #include "./primitiveTypes.h"
+#include "./boss.h"
 #include <windows.h>
 
 using namespace std;
-
+// Criação do tipo Player
 struct Player
 {
     COORD position;
@@ -28,7 +29,7 @@ struct Player
         position.Y += y;
     }
 };
-
+// Pega a posição para o sistema de colisão
 char getCharAtPosition(HANDLE hConsole, COORD position)
 {
     char c;
@@ -37,38 +38,40 @@ char getCharAtPosition(HANDLE hConsole, COORD position)
     return c;
 }
 
-void debugPrint(HANDLE hConsole, map mapCurrent, COORD newPosition, int a)
-{
-    // next char
-    SetConsoleCursorPosition(hConsole, {(SHORT)22, (SHORT)22});
-    cout << getCharAtPosition(hConsole, newPosition);
+// Debug...
+// void debugPrint(HANDLE hConsole, map mapCurrent, COORD newPosition, int a)
+// {
+//     // next char
+//     SetConsoleCursorPosition(hConsole, {(SHORT)22, (SHORT)22});
+//     cout << getCharAtPosition(hConsole, newPosition);
 
-    // map value array
-    for (int j = 0; j < 16; j++)
-    {
-        for (int i = 0; i < 16; i++)
-        {
-            SetConsoleCursorPosition(hConsole, {(SHORT)i, (SHORT)j});
-            if (mapCurrent.map[i][j] == 0)
-            {
-                cout << " ";
-            }
-            else
-            {
-                cout << mapCurrent.map[i][j];
-            }
-        }
-    }
+//     // map value array
+//     for (int j = 0; j < 16; j++)
+//     {
+//         for (int i = 0; i < 16; i++)
+//         {
+//             SetConsoleCursorPosition(hConsole, {(SHORT)i, (SHORT)j});
+//             if (mapCurrent.map[i][j] == 0)
+//             {
+//                 cout << " ";
+//             }
+//             else
+//             {
+//                 cout << mapCurrent.map[i][j];
+//             }
+//         }
+//     }
 
-    // cordenada e value array map
-    SetConsoleCursorPosition(hConsole, {(SHORT)20, (SHORT)20});
-    cout << "row: " << newPosition.Y << " column: " << newPosition.X << " value: " << mapCurrent.map[newPosition.Y][newPosition.X];
+//     // cordenada e value array map
+//     SetConsoleCursorPosition(hConsole, {(SHORT)20, (SHORT)20});
+//     cout << "row: " << newPosition.Y << " column: " << newPosition.X << " value: " << mapCurrent.map[newPosition.Y][newPosition.X];
 
-    // value int key
-    SetConsoleCursorPosition(hConsole, {(SHORT)21, (SHORT)21});
-    cout << a << endl;
-}
+//     // value int key
+//     SetConsoleCursorPosition(hConsole, {(SHORT)21, (SHORT)21});
+//     cout << a << endl;
+// }
 
+//Struct do Save do jogo
 struct Game
 {
     Player player;
@@ -76,15 +79,23 @@ struct Game
     int seed;
     enum ReturnTypes
     {
+        //morreu ou saiu do jogo
         exit,
+        //vai abrir o inventario
         inventory,
+        //começou um jogo novo
         start,
+        //jogo salvo Uso Atual é quando abre o inventario
         saved,
+        //matou o boss
+        victory,
     };
     Position inMap;
     ReturnTypes returnType;
     int points = 0;
+    short int roomsMoved = 0;
 };
+// Adiciona decrição para o item adquirido
 void descriptionItems(Items &item){
     unsigned short int randomNumber = rand()%3+1;
     switch (item.type)
@@ -148,31 +159,41 @@ void descriptionItems(Items &item){
         break;
     }
 }
+//Exibi o Hud do player
 void hudPrint(Player player, int points){
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)0});
-    cout << "   |====================|";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)1});
-    cout << "   |Health: 100 / "<< player.health << "   ";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)2});
-    cout << "   |--------------------|";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)3});
-    cout << "   |Inventory: 10 / "<< player.inventory.size << "  ";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)4});
-    cout << "   |--------------------|";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)5});
-    cout << "   |Dano do jogador: " << player.damage << "   ";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)6});
-    cout << "   |--------------------|";
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)7});
-    cout << "   |Pontuação: " << points;   
-    SetConsoleCursorPosition(hConsole,{(SHORT)16,(SHORT)8});
-    cout << "   |====================|";
-    // FALTA FAZER A DO INIMIGO, SEPARADA DA DO PLAYER, AGUARDANDO O DANIEL FINALIZAR OS INIMIGOS;
+    CONSOLE_SCREEN_BUFFER_INFO windowSize;
+    GetConsoleScreenBufferInfo(hConsole, &windowSize);
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)1});    
+    cout << "|====================|";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)2});
+    cout << "|Vida: 100 / "<< player.health << "  ";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)3});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)4});
+    cout << "|Inventário: 10 / "<< player.inventory.size;
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)5});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)6});
+    cout << "|Dano do jogador: " << player.damage;
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)7});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)8});
+    cout << "|Defesa do jogador: " << player.shield; 
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)9});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)10});
+    cout << "|Pontuação: " << points;   
+    SetConsoleCursorPosition(hConsole,{(SHORT)(windowSize.dwSize.X-23),(SHORT)11});
+    cout << "|====================|";
 }
+//boss já foi acertado?
+bool bossAlreadyHit;
 
+// Todo o jogo está aqui dentro
 void loopPlayer(Game &gameSaved)
 {
+    //Definição e iniciação das principais variáveis
     int StartTime = time(NULL);
     int seed;
     short int SelectMap;
@@ -182,9 +203,10 @@ void loopPlayer(Game &gameSaved)
     COORD currentPosition;
     Player player;
     Position inMap;
-
+    // Para os caracteres funcionarem
     setlocale(LC_ALL, "pt_BR.UTF-8");
 
+    //Caso o jogador vá para o invetário e volte para o jogo, essa função é a responsável por tudo voltar de onde parou
     if (gameSaved.returnType != Game::start)
     {
         mapCurrent = gameSaved.map;
@@ -198,7 +220,7 @@ void loopPlayer(Game &gameSaved)
         player.inventory.size = gameSaved.player.inventory.size;
         inMap = gameSaved.inMap;
     }
-    else
+    else // Caso a de cima seja falsa, essa "cria / inicia" o jogo do 0
     {
         seed = generateSeed();
         SelectMap = Seed(0,0,seed);
@@ -217,8 +239,8 @@ void loopPlayer(Game &gameSaved)
     char playerChar = '@';
     bool swapMap;
     int a;
-    bool passado = false,armadilha = false;//variaveis pro controle da armadilha
-    while ( gameSaved.returnType != Game::exit && gameSaved.returnType != Game::inventory)
+    bool passado = false,armadilha = false;//variaveis para o controle da armadilha
+    while (gameSaved.returnType != Game::exit && gameSaved.returnType != Game::inventory && gameSaved.returnType != Game::victory)
     {
         
         if (armadilha){//se a armadilha foi ativado avisa que está no proximo movimento pós armadilha
@@ -234,26 +256,40 @@ void loopPlayer(Game &gameSaved)
         
         SetConsoleCursorPosition(hConsole, {0, 0});
         if (swapMap){
-            //updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
+            if (gameSaved.roomsMoved > 10)
+            {
+                system("cls");
+                printBossRoom();
+                swapMap = false;
+                
+            }
+            else{
             printMap(mapCurrent);
+            updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
             swapMap = false;
             SetConsoleCursorPosition(hConsole, player.position);
             cout << playerChar;
-        }
+            }
+        } 
+        // Caso o player morra
         if(player.health <= 0){
-        
+            
             SetConsoleCursorPosition(hConsole, player.position);
             cout << "✞" << endl;
 
             gameSaved.player = player;
             gameSaved.map = mapCurrent;
             gameSaved.seed = seed;
-            gameSaved.points += (time(NULL) - StartTime)% 30;
+            gameSaved.points += (time(NULL) - StartTime)/ 30;
             gameSaved.returnType = Game::exit;
         }
         a = getch();
-        updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
-
+        if (gameSaved.roomsMoved <= 10) 
+        {
+            updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
+        }else{
+            updateBoss(mapCurrent, {player.position.X, player.position.Y}, hConsole,player.health);
+        }
         if (a)
         {
             //cout<<player.inventory.size;
@@ -288,13 +324,14 @@ void loopPlayer(Game &gameSaved)
                     mapCurrent.boss = true;
                 break;
             }
-
+            if(gameSaved.roomsMoved <= 10){
             switch (mapCurrent.map[newPosition.Y][newPosition.X])
             {
             case mapCurrent.entities::enemy:
                 //newPosition = currentPosition; // volta se tiver parede ou obstáculo
                 break;
             case mapCurrent.entities::portaSupInf:
+                gameSaved.roomsMoved++;
                 if (newPosition.Y > 0)
                 {
                     /*logic to select next map on bottom*/
@@ -314,6 +351,7 @@ void loopPlayer(Game &gameSaved)
                 }
                 break;
             case mapCurrent.entities::portaLat:
+                gameSaved.roomsMoved++;
                 if (newPosition.X > 0)
                 {
                     /*logic to select next map on right*/
@@ -336,6 +374,7 @@ void loopPlayer(Game &gameSaved)
             case mapCurrent.entities::item:
                 /*item*/
                 break;
+            // Caso o jogador pegue um baú, o case abaixo vai "gerar" o item que o jogador vai pegar
             case mapCurrent.entities::chest:
             {
                 mapCurrent.map[newPosition.Y][newPosition.X] = mapCurrent.entities::floor;
@@ -367,7 +406,7 @@ void loopPlayer(Game &gameSaved)
                                 "|-----|\n";
                             potion.midX = 7 / 2;
                             potion.midY = 10;
-                            potion.heal = (rand() % 50 + 1);
+                            potion.heal = (rand() % 50 + 10);
                             descriptionItems(potion);
                             player.inventory.items[player.inventory.size++] = potion;
                             break;
@@ -399,7 +438,7 @@ void loopPlayer(Game &gameSaved)
                                         "              \"\n";
                             sword.midX = 16 / 2;
                             sword.midY = 19 / 2;
-                            sword.damage = (rand() % 10);
+                            sword.damage = (rand() % 10+5);
                             descriptionItems(sword);
                             player.inventory.items[player.inventory.size++] = sword;
                             player.damage += sword.damage;
@@ -427,7 +466,7 @@ void loopPlayer(Game &gameSaved)
                                          "|=================|\n";
                             shield.midX = 19/2;
                             shield.midY = 15/2;
-                            shield.defense = (rand() % 10);
+                            shield.defense = (rand() % 10+5);
                             descriptionItems(shield);
                             player.inventory.items[player.inventory.size++] = shield;
                             player.shield += shield.defense;
@@ -443,7 +482,7 @@ void loopPlayer(Game &gameSaved)
                                         "    \\        /   \n"
                                         "     `._,._,'\n";
                             apple.midX = 15/2;
-                            apple.heal = (rand() % 10 + 1);
+                            apple.heal = (rand() % 10 + 5);
                             descriptionItems(apple);
                             player.inventory.items[player.inventory.size++] = apple;
                             break;
@@ -452,21 +491,24 @@ void loopPlayer(Game &gameSaved)
                         default:
                             break;
                     }
+                    // Mostra qual tipo de item o jogador pegou
                     SetConsoleCursorPosition(hConsole, {(SHORT)20, (SHORT)20});
                     string tipoItem;
                     switch (player.inventory.items[player.inventory.size-1].type)
                     {
                     case Items::weapon:
-                        tipoItem = "Arma";
+                        tipoItem = "Arma      ";
                         break;
                     case Items::armor:
-                        tipoItem = "Escudo";
+                        tipoItem = "Escudo    ";
                         break;
                     case Items::consumables:
                         tipoItem = "Consumível";
                         break;
                     }
-                    cout << "Você encontrou um novo Item do tipo:"+tipoItem;
+                    cout << "                                                     ";
+                    SetConsoleCursorPosition(hConsole, {(SHORT)20, (SHORT)20});
+                    cout << "Você encontrou um novo Item do tipo: "+tipoItem;
                    
                     break;
                 }
@@ -478,7 +520,7 @@ void loopPlayer(Game &gameSaved)
                 /*mimic*/
                 mapCurrent.map[newPosition.Y][newPosition.X] = mapCurrent.entities::floor;
                 SetConsoleCursorPosition(hConsole,currentPosition);
-                cout << " ";
+                // cout << " ";
                 player.health -= 10;
                 Beep(900, 50);
                 Beep(700, 50);
@@ -499,6 +541,7 @@ void loopPlayer(Game &gameSaved)
             default:
                 break;
             }
+        }
             // Apaga o player da posição anterior
             if (!passado && newPosition.X != currentPosition.X || newPosition.Y != currentPosition.Y)
             { 
@@ -521,27 +564,54 @@ void loopPlayer(Game &gameSaved)
                     for(int y = -1;y<2;y++){
                         //COOR usa X Y mas nós criamos todos os mapas pensando em Y,X
                         //Visualmente no arquivo Maps.h facilita porem deixa está confusão no código
-                        if(mapCurrent.map[currentPosition.Y + y][currentPosition.X + x] == mapCurrent.entities::fakewall){
-                            SetConsoleCursorPosition(hConsole,{(SHORT)(currentPosition.X + x),(SHORT)(currentPosition.Y + y)});
+                        //coordenada de onde o ataque está verificando
+                        COORD attackedCoord = { (SHORT)(currentPosition.X + x), (SHORT)(currentPosition.Y + y) };
+                        if(mapCurrent.map[attackedCoord.Y][attackedCoord.X] == mapCurrent.entities::fakewall){
+                            SetConsoleCursorPosition(hConsole,{attackedCoord});
                             cout << " ";
                         } 
-                    }
+                        
                 }
-            
-                for (short int i = 0; i < mapCurrent.maxEnemy; i++)
+                }    
+                // Toda a função de pontos e morte dos inimigos
+                bossAlreadyHit = false;
+                for (short int i = 0; i < mapCurrent.maxEnemy; i++) 
                 {
                     for(int x = -1;x<2;x++){
                         for(int y = -1;y<2;y++){
+                            COORD attackedCoord = { (SHORT)(currentPosition.X + x), (SHORT)(currentPosition.Y + y) };
+                            if (gameSaved.roomsMoved > 10)
+                            {
+                            enemy &boss = mapCurrent.enemyList[0]; // Get reference
+                            bool isWithinBossBounds = (attackedCoord.X >= boss.position.x && attackedCoord.X <= boss.position.x + 4 && // Check X range
+                            attackedCoord.Y >= boss.position.y && attackedCoord.Y <= boss.position.y + 4);   // Check Y range
+                            if (!bossAlreadyHit &&    // Only hit once per swing
+                            boss.health > 0 && boss.position.x != -1 && // Check if boss is valid and alive
+                            !isWithinBossBounds)             // Check if the attack hits ANY part of the boss sprite area
+                            {
+                            boss.health -= player.damage;
+                            Beep(600, 60); // Boss hit sound
+
+                            // Check if boss died from this hit
+                            if (boss.health <= 0) {
+                                // updateBoss will handle clearing the art and marking position as -1
+                                gameSaved.points += 500; // pontos por ter matado o boss
+                                gameSaved.returnType = Game::victory;
+                            }
+                            bossAlreadyHit = true; // Mark boss as hit for this attack swing
+                            
+                            }
+                            }else{
                             if (mapCurrent.enemyList[i].position.x == currentPosition.X + x && mapCurrent.enemyList[i].position.y == currentPosition.Y + y && mapCurrent.enemyList[i].health > 0){
                                 mapCurrent.enemyList[i].health -= player.damage;
                                 if(mapCurrent.enemyList[i].health <= 0){
                                     SetConsoleCursorPosition(hConsole, {(SHORT)mapCurrent.enemyList[i].position.x, (SHORT)mapCurrent.enemyList[i].position.y});
-                                    cout << ' ';
+                                    if(mapCurrent.enemyList[i].position.x != 0 && mapCurrent.enemyList[i].position.y != 0) cout << ' ';
                                     
                                     gameSaved.points+=10;
                                     mapCurrent.map[mapCurrent.enemyList[i].position.y][mapCurrent.enemyList[i].position.x] = mapCurrent.entities::floor;
                                 }
-                            }
+                            }}
                         }
                     }
                 }
@@ -562,8 +632,7 @@ void loopPlayer(Game &gameSaved)
             cout << playerChar;
 
 
-            // Pausa para dar tempo visual de ver o movimento
-            // Sleep(100);
+            //Parte da funcionalidade da armadilha
             if (armadilha && passado)
             {
                 SetConsoleCursorPosition(hConsole,currentPosition);

@@ -1,6 +1,7 @@
 #include<player.h>
 #include<iostream>
 using namespace std;
+//Struct abandonada
 struct genericEnemy{
     int health = 100;
     int damage = 10;

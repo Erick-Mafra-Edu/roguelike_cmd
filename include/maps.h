@@ -3,12 +3,12 @@
 #include <ctime>
 #include <windows.h>
 
-int Seed(int y, int x,int seed){
+int Seed(int y, int x,int seed){ // Adicionando geração infinitas de mapas
     seed = (y*983)+(x*797)+(seed*929);
     seed = seed % 13+1;
     return seed;//selectMap
 }
-int generateSeed(){
+int generateSeed(){ // Limite máximo
     srand(time(NULL));
     return rand()%999999;
 }
@@ -26,8 +26,8 @@ void definedMap(map &currentMap, short int newMap[16][16])
             currentMap.map[i][j] = newMap[i][j];
         }
     }
-    enemyHealth+=rand()%10+1;
-    enemyDamage+=rand()%10+1;
+    enemyHealth+=rand()%5+1; // Adiciona dificuldade ao inimigos progressivamente
+    enemyDamage+=rand()%5+1; // Adiciona dificuldade ao inimigos progressivamente
     for (int i = 0; i < 16; i++) 
     {
         for (int j = 0; j < 16; j++)
@@ -56,7 +56,7 @@ void definedMap(map &currentMap, short int newMap[16][16])
 }
 
 
-
+// Responsável por definir no mapa o que cada coisa é
 void printMap(map &mapCurrent)
 {
     for (int i = 0; i < 16; i++)
@@ -95,6 +95,7 @@ void printMap(map &mapCurrent)
                 break;
             case mapCurrent.entities::armadilha:
                 cout << " ";
+                break;
             default:
                 break;
             }
@@ -102,7 +103,7 @@ void printMap(map &mapCurrent)
         cout << endl;
     }
 }
-
+// Resposável por movimentações dos inimigos
 void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
 {
     if (mapCurrent.enemyList)
@@ -115,48 +116,51 @@ void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
             enemy &currentEnemy = mapCurrent.enemyList[i];
             if (currentEnemy.health > 0){
             
-            //limpa posição anterior
-            mapCurrent.map[currentEnemy.position.y][currentEnemy.position.x] = mapCurrent.entities::floor;
-            SetConsoleCursorPosition(hConsole, {(SHORT)currentEnemy.position.x, (SHORT)currentEnemy.position.y});
-            cout << " ";
+                //limpa posição anterior
+                mapCurrent.map[currentEnemy.position.y][currentEnemy.position.x] = mapCurrent.entities::floor;
+                SetConsoleCursorPosition(hConsole, {(SHORT)currentEnemy.position.x, (SHORT)currentEnemy.position.y});
+                if(currentEnemy.position.x !=0 && currentEnemy.position.y != 0) cout << " ";
 
-            // define a direção
-            currentEnemy.position.y < position.y ? dirY = 1 : dirY = -1;
-            currentEnemy.position.x < position.x ? dirX = 1 : dirX = -1;
-            
-            // anula a direção se estiver na reta do player
-            currentEnemy.position.y - position.y == 0 ? dirY = 0 : 0;
-            currentEnemy.position.x - position.x == 0 ? dirX = 0 : 0;
-    
-            // verifica se a proxima posição é parede
-            if (mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::parede ||
-                mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::portaLat ||
-                mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::portaSupInf ||
-                mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::fakewall)
-            {
-                dirX = 0;
-                dirY = 0;
-            }
+                // define a direção
+                currentEnemy.position.y < position.y ? dirY = 1 : dirY = -1;
+                currentEnemy.position.x < position.x ? dirX = 1 : dirX = -1;
+                
+                // anula a direção se estiver na reta do player
+                currentEnemy.position.y - position.y == 0 ? dirY = 0 : 0;
+                currentEnemy.position.x - position.x == 0 ? dirX = 0 : 0;
+        
+                // verifica se a proxima posição é parede
+                if (mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::parede ||
+                    mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::portaLat ||
+                    mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::portaSupInf ||
+                    mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::fakewall)
+                {
+                    dirX = 0;
+                    dirY = 0;
+                }
 
-            // atualiza a posição se for piso e não é a posição do player
-            if (mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::floor )
-            {
-                currentEnemy.position.x += dirX;
-                currentEnemy.position.y += dirY;
-            }
-            
-            //define a posição do inimigo
-            mapCurrent.map[currentEnemy.position.y][currentEnemy.position.x] = mapCurrent.entities::enemy;
-            SetConsoleCursorPosition(hConsole, {(SHORT)currentEnemy.position.x, (SHORT)currentEnemy.position.y});
+                // atualiza a posição se for piso e não é a posição do player
+                if (mapCurrent.map[currentEnemy.position.y + dirY][currentEnemy.position.x + dirX] == mapCurrent.entities::floor )
+                {
+                    currentEnemy.position.x += dirX;
+                    currentEnemy.position.y += dirY;
+                }
+                
+                //define a posição do inimigo
+                mapCurrent.map[currentEnemy.position.y][currentEnemy.position.x] = mapCurrent.entities::enemy;
+                SetConsoleCursorPosition(hConsole, {(SHORT)currentEnemy.position.x, (SHORT)currentEnemy.position.y});
 
-            if(currentEnemy.health > 0) 
-                cout << mapCurrent.enemyList->c;
+                if(currentEnemy.health > 0){
+                    cout << mapCurrent.enemyList->c;
+                }
+                
+                if(currentEnemy.health < 0 && currentEnemy.position.x !=0 && currentEnemy.position.y != 0){
+                    cout<< " ";
+                }
             }
-            if(currentEnemy.health < 0){
-                cout<< " ";
-            }
-            }
-        }
+        }   
+    }
+
         
         // if(mapCurrent.boss){
         //     mapCurrent.clearEnemyRoom();
@@ -169,9 +173,10 @@ void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
         //     mapCurrent.enemyList[0].position = {(short)5, (short)5};
         //     mapCurrent.boss = false;
         // }
-    }
 
 
+}
+// Criação dos mapas, matriz mãe.
 void mapa(map &newMap,short int mapSelect)
 {
     newMap.spawnPos[map::bottom] = {5, 5};
@@ -352,7 +357,7 @@ void mapa(map &newMap,short int mapSelect)
         {92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
-        {1, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 1},
+        {1, 0, 4, 11, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 1},
         {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
         {1, 21, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -373,7 +378,7 @@ void mapa(map &newMap,short int mapSelect)
         {1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1},
         {1, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 21, 5, 1, 0, 1},
         {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1},
-        {1, 21, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 21, 11, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 91, 91, 1, 1, 1, 1, 1, 1, 1}};
 
@@ -414,23 +419,24 @@ void mapa(map &newMap,short int mapSelect)
         {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9}};
 
     short int Template[16][16] = {
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9}};
-
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    
+    // Seleção da matriz mapa para printar no terminal
     switch (mapSelect)
     {
     case 1:

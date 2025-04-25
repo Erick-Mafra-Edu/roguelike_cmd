@@ -25,6 +25,7 @@ void Draw(string art,short int startX){
     
     
 }
+//Som
 void consumablesSound() {
     Beep(450, 40);
     Sleep(30);
@@ -34,6 +35,7 @@ void consumablesSound() {
     Sleep(30);
     Beep(300, 70);
 }
+// Limpa as descrições
 void ClearDescription(int midY, CONSOLE_SCREEN_BUFFER_INFO windowInfo){
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -47,13 +49,15 @@ void ClearDescription(int midY, CONSOLE_SCREEN_BUFFER_INFO windowInfo){
         cout<<"                                                                                                             ";
         SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
         cout<<"                                                                                                             ";
-    }
+}
+// Organiza um inventário se consumido ou descartado
 void OrganizationInventory(Inventory &inventory, short int move){
     for(int i = move+1; i < inventory.size + 1; i++){
         inventory.items[i-1] = inventory.items[i];
     }
     inventory.size--;
 }
+// Todos os itens... Definição dos itens e das características de cada um
 void AllItems(Inventory &inventory){
     Items sword;
     // sword.durability = 100; // Para uma possível atualização futura
@@ -83,15 +87,15 @@ void AllItems(Inventory &inventory){
     sword.midY = 19/2;
     inventory.items[0] = sword;
     // Items chest;
-//     chest.art = "         __________\n"
-// "        /\\____;;___\\\n"
-// "       | /         /\n"
-// "       `. ())oo() .\n"
-// "        |\\(%()*^^()^\\\n"
-// "        | |-%-------|\n"
-// "        \\ | %  ))   |\n"
-// "         \\|%________|\n";
-//     chest.midX = 21/2;
+    //chest.art = "         __________\n"
+    // "        /\\____;;___\\\n"
+    // "       | /         /\n"
+    // "       `. ())oo() .\n"
+    // "        |\\(%()*^^()^\\\n"
+    // "        | |-%-------|\n"
+    // "        \\ | %  ))   |\n"
+    // "         \\|%________|\n";
+    //     chest.midX = 21/2;
     Items potion;
     potion.type = Items::consumables;
     potion.art = 
@@ -110,10 +114,10 @@ void AllItems(Inventory &inventory){
     Items apple;
     apple.type = Items::consumables;
     apple.art = "     ,--./,-.\n"
-"    / #      \\\n"
-"   |          |\n"
-"    \\        /   \n"
-"     `._,._,'\n";
+                "    / #      \\\n"
+                "   |          |\n"
+                "    \\        /   \n"
+                "     `._,._,'\n";
     apple.midX = 15/2;
     inventory.items[2]=apple;
     Items shield;
@@ -159,13 +163,15 @@ string clearString = "                                             \n"
 "                                             \n"
 "                                             \n"
 "                                             \n";
+// Toda a funcionalidade do menu dos itens
 void ItemsMenu(Inventory &inventory, Player &player){
     system("cls");
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO windowInfo;
     GetConsoleScreenBufferInfo(console, &windowInfo);
-    cout<<windowInfo.dwSize.X<<endl;
-    cout<<windowInfo.dwSize.Y;
+    //Debug do tamanho do inventário
+    // cout<<windowInfo.dwSize.X<<endl;
+    // cout<<windowInfo.dwSize.Y;
     short int CalcRap = windowInfo.dwSize.X - 1;
     short int MidCalc = windowInfo.dwSize.X - 1;
     SetConsoleCursorPosition(console, {CalcRap, 0});
@@ -187,11 +193,38 @@ void ItemsMenu(Inventory &inventory, Player &player){
     midX -= 20/2;
     midY -= 19/2;
     SetConsoleCursorPosition(console, {midX, midY});  
-    short int sim = 0;
+    
     int input;
     int move = 0;
     do
     {   
+        SetConsoleCursorPosition(console, {midX, (SHORT)(midY+10)});
+        Draw(clearString,30);
+        ClearDescription(midY,windowInfo);
+        if (inventory.items[move].type == Items::empty)
+        {
+            inventory.items[move].description[0]="Você encontrou o lendário item do nada absoluto!";
+            inventory.items[move].description[1]="...que não faz nada mesmo.";
+            inventory.items[move].description[2]="(Slot vazio.)";
+        }else{
+        Draw(inventory.items[move].art,inventory.items[move].midX);
+        }
+        SetConsoleCursorPosition(console, {1, (SHORT)(midY+9+11)});
+        for (unsigned short int i = 0; i < windowInfo.dwSize.X - 2; i++) // Imprime a linha entre o item e a descrição
+        {
+            cout<<"-";
+        }
+        for (unsigned short int i = 0; i < 3; i++) // Imprime a descrição do item
+        {
+            SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
+            cout<<inventory.items[move].description[i];
+        }
+        SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
+        if(inventory.items[move].type == Items::consumables){
+            cout << " Pressione C para consumir.";
+        }else if(inventory.items[move].type != Items::empty){
+            cout << " Pressione X para descartar.";
+        }
         input = getch();
         switch (input)
         {
@@ -199,8 +232,7 @@ void ItemsMenu(Inventory &inventory, Player &player){
             if(inventory.items[move].type != Items::empty){
                 SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
                 cout << "Esse item é importante, deseja jogar fora mesmo?    S ou N";
-                sim = getch();
-                switch (sim){
+                switch (getch()){
                     case 's' : case 'S':
                     {
                         OrganizationInventory(inventory,move);
@@ -237,33 +269,6 @@ void ItemsMenu(Inventory &inventory, Player &player){
             break;
         }
         // AllItems(inventory);
-        SetConsoleCursorPosition(console, {midX, (SHORT)(midY+10)});
-        Draw(clearString,30);
-        ClearDescription(midY,windowInfo);
-        if (inventory.items[move].type == Items::empty)
-        {
-            inventory.items[move].description[0]="Você encontrou o lendário item do nada absoluto!";
-            inventory.items[move].description[1]="...que não faz nada mesmo.";
-            inventory.items[move].description[2]="(Slot vazio.)";
-        }else{
-        Draw(inventory.items[move].art,inventory.items[move].midX);
-        }
-        SetConsoleCursorPosition(console, {1, (SHORT)(midY+9+11)});
-        for (unsigned short int i = 0; i < windowInfo.dwSize.X - 2; i++) // Imprime a linha entre o item e a descrição
-        {
-            cout<<"-";
-        }
-        for (unsigned short int i = 0; i < 3; i++) // Imprime a descrição do item
-        {
-            SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
-            cout<<inventory.items[move].description[i];
-        }
-        SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
-        if(inventory.items[move].type == Items::consumables){
-            cout << " Pressione C para consumir.";
-        }else if(inventory.items[move].type != Items::empty){
-            cout << " Pressione X para descartar.";
-        }
     } while (input != 27);
     system("cls");
 }

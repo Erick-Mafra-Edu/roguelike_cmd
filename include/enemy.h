@@ -3,6 +3,7 @@
 #include <iostream>
 #include "./primitiveTypes.h"
 
+// Define o tipo inimigo
 struct enemy
 {
     char c = '!';
