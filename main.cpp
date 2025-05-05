@@ -3,7 +3,7 @@
 #include <windows.h>
 #include "./include/player.h"
 #include "./include/menu.h"
-#include "./include/itemsmenu.h"
+#include "./include/itemsmenu.hpp"
 #include "./include/victory.h"
 #include <locale.h>
 

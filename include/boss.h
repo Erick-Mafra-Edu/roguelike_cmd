@@ -28,7 +28,10 @@ void clearConsolePosition(HANDLE &hConsole, COORD pos) {
     SetConsoleCursorPosition(hConsole, pos);
     cout << " ";
 }
-
+bool overlapsPlayer(Position bossPos, Position playerPos) {
+    return (playerPos.x >= bossPos.x && playerPos.x <= bossPos.x + 5 - 1 &&
+            playerPos.y >= bossPos.y && playerPos.y <= bossPos.y + 5 - 1);
+}
 // Função que desenha o boss na posição indicada
 void drawBossArt(HANDLE &hConsole, Position pos) {
     string artBoss[5] = {"¬¬¬¬¬", "[= =]", "|0 0|", "|@ @|", "/|||\\"};
@@ -90,12 +93,12 @@ void printBossRoom() {
 }
 
 // Função que atualiza o boss e realiza a lógica de ataque e movimento
-void updateBoss(map &mapCurrent, Position playerPos, HANDLE &hConsole , int &health) {
+void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int &health) {
     enemy &boss = mapCurrent.enemyList[0]; // Pega uma referência ao boss na lista de inimigos
     int moveDirX = 0, moveDirY = 0; // Direção de movimento do boss neste frame
     CONSOLE_SCREEN_BUFFER_INFO windowSize;
     GetConsoleScreenBufferInfo(hConsole, &windowSize);
-    static bool bossInitialized = false; // Flag simples para inicialização do boss
+    static bool bossInitialized = false; 
 
     if (!bossInitialized || (boss.position.x == 0 && boss.position.y == 0)) {
         // Inicializa o boss no centro da tela

@@ -4,7 +4,7 @@
 using namespace std;
 
 // Toda a criação do tipo map
-struct map
+struct Gamemap
 {
     static const short int maxEnemy = 4; // inimigos máximos por sala
     enemy enemyList[maxEnemy];

@@ -4,8 +4,7 @@
 using namespace std;
 
 // Criação dos itens, usado para se fazer os itens para o jogo
-struct Items
-{
+struct Items{
     enum TypeofItems
     {
         consumables,
@@ -14,8 +13,8 @@ struct Items
         empty,
     };
     TypeofItems type = empty;
-    short int quantity;
-    float durability;
+    short int quantity = 1;
+    float durability = 0;
     short int damage = 0;
     short int defense = 0;
     short int heal = 0;

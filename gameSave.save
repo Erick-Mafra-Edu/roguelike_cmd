@@ -1,0 +1,100 @@
+[Roguelike ASCII]
+[Player]
+Health	100
+Damage	10
+Position	0	0
+[Inventory]
+[Items]
+Type	2
+Quantity	1
+Durability	0
+Damage	10
+Defense	0
+Heal	0
+Art	      .         
+     /:\    (""")
+     |:|     III
+     |:|     III
+     |:|     III
+     |:|   __III__
+     |:| /:-.___,-:\
+     |:| \]  |:|  [/
+     |:|     |:|
+     |:|     |:|
+     |:|     |:|
+ /]  |:|  [\ |:|
+ \:-'"""`-:/ |:|
+   ""III""   |:|
+     III     |:|
+     III     |:|
+     III     |:|
+    (___)    \:/
+              "
+
+MidX	8
+MidY	9
+Description			
+Type	0
+Quantity	1
+Durability	0
+Damage	0
+Defense	0
+Heal	0
+Art	   _
+  |=|
+  | |
+  | |
+ /   \
+.     .
+|-----|
+|     |
+|-----|
+
+MidX	3
+MidY	10
+Description			
+Type	0
+Quantity	1
+Durability	0
+Damage	0
+Defense	0
+Heal	0
+Art	     ,--./,-.
+    / #      \
+   |          |
+    \        /   
+     `._,._,'
+
+MidX	7
+MidY	98
+Description			
+Type	1
+Quantity	1
+Durability	0
+Damage	0
+Defense	0
+Heal	0
+Art	|\===============/|
+| \_____________/ |
+|      _____      |
+|     |     |     |
+|     |     |     |
+|  ====     ====  |
+|  ||         ||  |
+|  ||         ||  |
+|  ====     ====  |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    =========    |
+|=================|
+
+MidX	9
+MidY	7
+Description			
+[Game]
+seed	0
+ReturnType	0
+points	0
+roomsMoved	0

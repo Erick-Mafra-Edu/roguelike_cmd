@@ -1,6 +1,7 @@
 #include "./map.h"
 #include "./enemy.h"
 #include <ctime>
+
 #include <windows.h>
 
 int Seed(int y, int x,int seed){ // Adicionando geração infinitas de mapas
@@ -13,7 +14,7 @@ int generateSeed(){ // Limite máximo
     return rand()%999999;
 }
 int enemyHealth =10,enemyDamage=10;
-void definedMap(map &currentMap, short int newMap[16][16])
+void definedMap(Gamemap &currentMap, short int newMap[16][16])
 {
     int amount = 0;
     currentMap.clearEnemyRoom(); // Garante que a lista de inimigos está limpa
@@ -36,7 +37,7 @@ void definedMap(map &currentMap, short int newMap[16][16])
             // - Ainda há espaço na lista de inimigos (amount < maxEnemy)
             // - A posição atual no mapa é um piso (floor)
             // - A chance aleatória (1%) ocorreu
-            if (amount < currentMap.maxEnemy && currentMap.map[i][j] == map::entities::floor && (rand() % 100 < 1))
+            if (amount < currentMap.maxEnemy && currentMap.map[i][j] == Gamemap::entities::floor && (rand() % 100 < 1))
             {
                 // Se todas as condições forem verdadeiras, adicione o inimigo:
                 currentMap.map[i][j] = currentMap.entities::enemy; // Coloca o inimigo visualmente no mapa
@@ -57,7 +58,7 @@ void definedMap(map &currentMap, short int newMap[16][16])
 
 
 // Responsável por definir no mapa o que cada coisa é
-void printMap(map &mapCurrent)
+void printMap(Gamemap &mapCurrent)
 {
     for (int i = 0; i < 16; i++)
     {
@@ -104,7 +105,7 @@ void printMap(map &mapCurrent)
     }
 }
 // Resposável por movimentações dos inimigos
-void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
+void updateMoveEnemies(Gamemap &mapCurrent, Position position, HANDLE &hConsole)
 {
     if (mapCurrent.enemyList)
     {
@@ -177,9 +178,9 @@ void updateMoveEnemies(map &mapCurrent, Position position, HANDLE &hConsole)
 
 }
 // Criação dos mapas, matriz mãe.
-void mapa(map &newMap,short int mapSelect)
+void mapa(Gamemap &newMap,short int mapSelect)
 {
-    newMap.spawnPos[map::bottom] = {5, 5};
+    newMap.spawnPos[Gamemap::bottom] = {5, 5};
     newMap.enemy; // Inimigo = Número 2
 
 

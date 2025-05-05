@@ -10,7 +10,7 @@ using namespace std;
 // Criação do tipo Player
 struct Player
 {
-    COORD position;
+    COORD position = {0,0};
     Inventory inventory;
 
 
@@ -23,7 +23,7 @@ struct Player
         position.Y = y;
     }
 
-    void setRelativePosition(int x, int y)
+    void setRelativePosition(int &x, int &y)
     {
         position.X += x;
         position.Y += y;
@@ -75,7 +75,7 @@ char getCharAtPosition(HANDLE hConsole, COORD position)
 struct Game
 {
     Player player;
-    map map;
+    Gamemap map;
     int seed;
     enum ReturnTypes
     {
@@ -91,7 +91,7 @@ struct Game
         victory,
     };
     Position inMap;
-    ReturnTypes returnType;
+    ReturnTypes returnType = exit;
     int points = 0;
     short int roomsMoved = 0;
 };
@@ -193,12 +193,13 @@ bool bossAlreadyHit;
 // Todo o jogo está aqui dentro
 void loopPlayer(Game &gameSaved)
 {
+    
     //Definição e iniciação das principais variáveis
     int StartTime = time(NULL);
     int seed;
     short int SelectMap;
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    map mapCurrent;
+    Gamemap mapCurrent;
     COORD newPosition;
     COORD currentPosition;
     Player player;
@@ -242,7 +243,8 @@ void loopPlayer(Game &gameSaved)
     bool passado = false,armadilha = false;//variaveis para o controle da armadilha
     while (gameSaved.returnType != Game::exit && gameSaved.returnType != Game::inventory && gameSaved.returnType != Game::victory)
     {
-        
+        SetConsoleCursorPosition(hConsole, player.position);
+        cout << playerChar;
         if (armadilha){//se a armadilha foi ativado avisa que está no proximo movimento pós armadilha
             passado = true;
         }
@@ -628,8 +630,6 @@ void loopPlayer(Game &gameSaved)
             // Atualiza posição do player
             player.setPosition(newPosition.X, newPosition.Y);
             
-            SetConsoleCursorPosition(hConsole, player.position);
-            cout << playerChar;
 
 
             //Parte da funcionalidade da armadilha
