@@ -237,10 +237,17 @@ void ItemsMenu(Inventory &inventory, Player &player){
                 switch (getch()){
                     case 's' : case 'S':
                     {
+                        //Player perde defesa e dano ao jogar fora arma ou armadura
+                        if(inventory.items->armor){
+                            player.shield -= inventory.items[move].defense;
+                        }else if(inventory.items->weapon){
+                            player.damage -= inventory.items[move].damage;
+                        }
                         OrganizationInventory(inventory,move);
                         Draw(clearString,30);
                         ClearDescription(midY,windowInfo);
                         move > 1 ? move-- : move = 0;
+                        
                     }
                     case 'n' : case 'N':
                     break;
