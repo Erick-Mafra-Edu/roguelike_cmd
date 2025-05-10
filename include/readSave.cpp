@@ -29,6 +29,7 @@ int main(){
     };
     unsigned short int i = 0;
     if(fileSave.is_open()){
+        Game game;
         Player player;
         while (getline(fileSave, line))
         {
@@ -112,7 +113,8 @@ int main(){
                             /* code */
                             break;
                         case valueType::Defense:
-                            /* code */
+                                player.inventory.items[i].defense = stoi(value);
+                                cout<<i<<",";
                             break;
                         case valueType::Heal:
                                 player.inventory.items[i].heal = stoi(value);
@@ -168,15 +170,52 @@ int main(){
                         isValue = true;
                         type = valueType::Damage;
                     }
-                    // if (type != valueType::Art)
-                    // {
+                    // if (type != valueType::Art) // SEM SENTIDO
+                    // { 
                         
                     // }
                     
                 }
             }else if (actualSession == "[Game]")
             {
-                // cout<<"Game Save";
+                valueType type;
+                bool isValue = false;
+                string value = "";
+                stringstream valuesLine(line);
+                if(line != "[Game]")
+                while(getline(valuesLine,value,tabChar)){
+                    if(isValue){
+                        switch(type){
+                            case valueType::seed:
+                                game.seed = stoi(value);
+                            break;
+                            case valueType::ReturnType:
+                                game.returnType = static_cast<Game::ReturnTypes>(stoi(value));
+                            break;
+                            case valueType::points:
+                                game.points = stoi(value);
+                            break;
+                            case valueType::roomsMoved:
+                                game.roomsMoved = stoi(value);
+                            break;
+                            
+                        }
+
+                    }
+                    if (value == "seed"){
+                        isValue = true;
+                        type = valueType::seed;
+                    }else if(value == "ReturnType"){
+                        isValue = true;
+                        type = valueType::ReturnType;
+                    }else if(value == "points"){
+                        isValue = true;
+                        type = valueType::points;
+                    }else if(value == "roomsMoved"){
+                        isValue = true;
+                        type = valueType::roomsMoved;
+                    }
+                    
             }  
         }
         cout<<player.inventory.items[0].type;
@@ -185,4 +224,5 @@ int main(){
         cout<<player.inventory.items[3].type;
         cout << endl << player.position.X <<","<< player.position.Y << endl;
     }
+    fileSave.close();
 }

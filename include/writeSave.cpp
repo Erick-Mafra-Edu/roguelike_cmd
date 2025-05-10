@@ -30,16 +30,6 @@ void AllItems(Inventory &inventory){
     sword.midX = 16/2;
     sword.midY = 19/2;
     inventory.items[0] = sword;
-    // Items chest;
-    //chest.art = "         __________\n"
-    // "        /\\____;;___\\\n"
-    // "       | /         /\n"
-    // "       `. ())oo() .\n"
-    // "        |\\(%()*^^()^\\\n"
-    // "        | |-%-------|\n"
-    // "        \\ | %  ))   |\n"
-    // "         \\|%________|\n";
-    //     chest.midX = 21/2;
     Items potion;
     potion.type = Items::consumables;
     potion.art = 
@@ -118,10 +108,10 @@ int main(){
         <<"\t"<<test.player.inventory.items[i].description[2]<<endl;
     }
     fileSave << "[Game]" << endl;
-    fileSave << "seed" << "\t" << test.seed << endl;
+    fileSave << "Seed" << "\t" << test.seed << endl;
     fileSave << "ReturnType" << "\t" << test.returnType << endl;
-    fileSave << "points" << "\t" << test.points << endl;
-    fileSave << "roomsMoved" << "\t" << test.roomsMoved << endl;
+    fileSave << "Points" << "\t" << test.points << endl;
+    fileSave << "Rooms Moved" << "\t" << test.roomsMoved << endl;
 
     fileSave.close();
 }

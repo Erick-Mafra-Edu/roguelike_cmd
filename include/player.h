@@ -74,6 +74,7 @@ char getCharAtPosition(HANDLE hConsole, COORD position)
 //Struct do Save do jogo
 struct Game
 {
+    char nick[3];
     Player player;
     Gamemap map;
     int seed;
@@ -90,6 +91,7 @@ struct Game
         //matou o boss
         victory,
     };
+    int baseEnemyDamage = 10;
     Position inMap;
     ReturnTypes returnType = exit;
     int points = 0;
@@ -286,12 +288,7 @@ void loopPlayer(Game &gameSaved)
             gameSaved.returnType = Game::exit;
         }
         a = getch();
-        if (gameSaved.roomsMoved <= 10) 
-        {
-            updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
-        }else{
-            updateBoss(mapCurrent, {player.position.X, player.position.Y}, hConsole,player.health);
-        }
+
         if (a)
         {
             //cout<<player.inventory.size;
@@ -408,7 +405,7 @@ void loopPlayer(Game &gameSaved)
                                 "|-----|\n";
                             potion.midX = 7 / 2;
                             potion.midY = 10;
-                            potion.heal = (rand() % 50 + 10);
+                            potion.heal = (gameSaved.baseEnemyDamage/2) + (rand() % 50 + 10);
                             descriptionItems(potion);
                             player.inventory.items[player.inventory.size++] = potion;
                             break;
@@ -589,7 +586,7 @@ void loopPlayer(Game &gameSaved)
                             attackedCoord.Y >= boss.position.y && attackedCoord.Y <= boss.position.y + 4);   // Check Y range
                             if (!bossAlreadyHit &&    // Only hit once per swing
                             boss.health > 0 && boss.position.x != -1 && // Check if boss is valid and alive
-                            !isWithinBossBounds)             // Check if the attack hits ANY part of the boss sprite area
+                            isWithinBossBounds)             // Check if the attack hits ANY part of the boss sprite area
                             {
                             boss.health -= player.damage;
                             Beep(600, 60); // Boss hit sound
@@ -640,6 +637,12 @@ void loopPlayer(Game &gameSaved)
                 armadilha = false;
                 passado = false;
             }
+        }
+        if (gameSaved.roomsMoved <= 10) 
+        {
+            updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
+        }else{
+            updateBoss(mapCurrent,player.position, hConsole,player.health);
         }
     }
 }

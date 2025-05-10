@@ -28,9 +28,9 @@ void clearConsolePosition(HANDLE &hConsole, COORD pos) {
     SetConsoleCursorPosition(hConsole, pos);
     cout << " ";
 }
-bool overlapsPlayer(Position bossPos, Position playerPos) {
-    return (playerPos.x >= bossPos.x && playerPos.x <= bossPos.x + 5 - 1 &&
-            playerPos.y >= bossPos.y && playerPos.y <= bossPos.y + 5 - 1);
+bool overlapsPlayer(Position bossPos, COORD playerPos) {
+    return (playerPos.X >= bossPos.x && playerPos.X <= bossPos.x + 5 - 1 &&
+            playerPos.Y >= bossPos.y && playerPos.Y <= bossPos.y + 5 - 1);
 }
 // Função que desenha o boss na posição indicada
 void drawBossArt(HANDLE &hConsole, Position pos) {
@@ -93,7 +93,7 @@ void printBossRoom() {
 }
 
 // Função que atualiza o boss e realiza a lógica de ataque e movimento
-void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int &health) {
+void updateBoss(Gamemap &mapCurrent, COORD &playerPos, HANDLE &hConsole , int &health) {
     enemy &boss = mapCurrent.enemyList[0]; // Pega uma referência ao boss na lista de inimigos
     int moveDirX = 0, moveDirY = 0; // Direção de movimento do boss neste frame
     CONSOLE_SCREEN_BUFFER_INFO windowSize;
@@ -139,7 +139,7 @@ void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int 
         // Verifica colisões com parede ou jogador
         bool hitWall = bossProjectilePosition.X <= 0 || bossProjectilePosition.X >= windowSize.dwSize.X - 1 ||
                        bossProjectilePosition.Y <= 0 || bossProjectilePosition.Y >= windowSize.dwSize.Y - 1;
-        bool hitPlayer = bossProjectilePosition.X == playerPos.x && bossProjectilePosition.Y == playerPos.y;
+        bool hitPlayer = bossProjectilePosition.X == playerPos.X && bossProjectilePosition.Y == playerPos.Y;
 
         if (hitWall || hitPlayer) {
             bossIsAttacking = false; // Para o ataque
@@ -166,12 +166,12 @@ void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int 
         }
 
         // Calcula a direção do movimento do boss em direção ao jogador
-        if (boss.position.y < playerPos.y) moveDirY = 1;
-        else if (boss.position.y > playerPos.y) moveDirY = -1;
+        if (boss.position.y < playerPos.Y) moveDirY = 1;
+        else if (boss.position.y > playerPos.Y) moveDirY = -1;
         else moveDirY = 0;
 
-        if (boss.position.x < playerPos.x) moveDirX = 1;
-        else if (boss.position.x > playerPos.x) moveDirX = -1;
+        if (boss.position.x < playerPos.X) moveDirX = 1;
+        else if (boss.position.x > playerPos.X) moveDirX = -1;
         else moveDirX = 0;
 
         // --- Decisão de ataque ---
@@ -202,15 +202,12 @@ void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int 
         // Se o boss não está atacando, tenta se mover
         Position nextPos = boss.position;
         // Verifica se sobrepõe o player
-        bool overlapsPlayer = (playerPos.x >= nextPos.x && playerPos.x <= nextPos.x + 4 &&
-            playerPos.y >= nextPos.y && playerPos.y <= nextPos.y + 4);
+        bool overlapsPlayer = (playerPos.X >= nextPos.x && playerPos.X <= nextPos.x + 4 &&
+            playerPos.Y >= nextPos.y && playerPos.Y <= nextPos.y + 4);
         if (overlapsPlayer) {
         moveDirX = 0;
         moveDirY = 0;
         }
-        nextPos.x += moveDirX;
-        nextPos.y += moveDirY;
-
         // Verifica colisão com as paredes
         if (nextPos.x <= 0 || nextPos.x + 4 >= windowSize.dwSize.X - 1) {
             moveDirX = 0; // Para o movimento horizontal se atingir as paredes laterais
@@ -218,6 +215,9 @@ void updateBoss(Gamemap &mapCurrent, Position playerPos, HANDLE &hConsole , int 
         if (nextPos.y <= 0 || nextPos.y + 4 >= windowSize.dwSize.Y - 1) {
             moveDirY = 0; // Para o movimento vertical se atingir o teto ou chão
         }
+        nextPos.x += moveDirX;
+        nextPos.y += moveDirY;
+
         
 
         // Atualiza a posição do boss

@@ -2,7 +2,6 @@
 #include "player.h"
 
 TEST(PlayerTest, PlayerCreation) {
-    
     Player player;
     EXPECT_EQ(player.position.X,0);
     EXPECT_EQ(player.position.Y,0);
