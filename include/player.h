@@ -93,7 +93,7 @@ struct Game
     };
     int baseEnemyDamage = 10;
     Position inMap;
-    ReturnTypes returnType = exit;
+    ReturnTypes returnType = start;
     int points = 0;
     short int roomsMoved = 0;
 };
@@ -222,6 +222,7 @@ void loopPlayer(Game &gameSaved)
         player.inventory.size = 0;
         player.inventory.size = gameSaved.player.inventory.size;
         inMap = gameSaved.inMap;
+        gameSaved.returnType = Game::start;
     }
     else // Caso a de cima seja falsa, essa "cria / inicia" o jogo do 0
     {
@@ -243,7 +244,7 @@ void loopPlayer(Game &gameSaved)
     bool swapMap;
     int a;
     bool passado = false,armadilha = false;//variaveis para o controle da armadilha
-    while (gameSaved.returnType != Game::exit && gameSaved.returnType != Game::inventory && gameSaved.returnType != Game::victory)
+    while (gameSaved.returnType == Game::start)
     {
         SetConsoleCursorPosition(hConsole, player.position);
         cout << playerChar;
@@ -318,9 +319,19 @@ void loopPlayer(Game &gameSaved)
                 gameSaved.points += (time(NULL)-StartTime)% 30;
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::inventory;
+                break;
+            case 27:
+                gameSaved.player = player;
+                gameSaved.map = mapCurrent;
+                gameSaved.seed = seed;
+                gameSaved.points += (time(NULL)-StartTime)% 30;
+                gameSaved.inMap = inMap;
+                gameSaved.returnType = Game::saved;
+                break;
+
             default:
                     // debugPrint(hConsole, mapCurrent, newPosition, a);
-                    mapCurrent.boss = true;
+                    // mapCurrent.boss = true;
                 break;
             }
             if(gameSaved.roomsMoved <= 10){
@@ -644,5 +655,6 @@ void loopPlayer(Game &gameSaved)
         }else{
             updateBoss(mapCurrent,player.position, hConsole,player.health);
         }
+
     }
 }

@@ -4,7 +4,8 @@
 using namespace std;
 #include "./player.h"
 const char tabChar = '\t';
-int main(){
+int main()
+{
     ifstream fileSave("gameSave.save");
     string line;
     string pastSession = "";
@@ -66,8 +67,6 @@ int main(){
                         player.position.Y = stoi(value);
                         
                     }
-                    
-                    
                     if (value == "Health"){
                         isValue = true;
                         type = valueType::Health;
@@ -78,12 +77,8 @@ int main(){
                         isValue = true;
                         type = valueType::Position;
                     }
-                    
-                    
                 };
                 isValue = false;
-                
-                
             }else if (actualSession == "[Inventory]")
             {
                 // cout<<"Inventory Save";
@@ -216,13 +211,14 @@ int main(){
                         type = valueType::roomsMoved;
                     }
                     
-            }  
-        }
+                } 
+            }
         cout<<player.inventory.items[0].type;
         cout<<player.inventory.items[1].type;
         cout<<player.inventory.items[2].type;
         cout<<player.inventory.items[3].type;
         cout << endl << player.position.X <<","<< player.position.Y << endl;
+        }
+        fileSave.close();
     }
-    fileSave.close();
 }
