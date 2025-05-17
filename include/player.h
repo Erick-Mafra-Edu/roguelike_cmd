@@ -70,11 +70,13 @@ char getCharAtPosition(HANDLE hConsole, COORD position)
 //     SetConsoleCursorPosition(hConsole, {(SHORT)21, (SHORT)21});
 //     cout << a << endl;
 // }
-
+struct Nick{
+    char nick[3] = {'\0','\0','\0'};
+};
 //Struct do Save do jogo
 struct Game
 {
-    char nick[3];
+    Nick nick[100] = {Nick()};
     Player player;
     Gamemap map;
     int seed;
@@ -94,7 +96,7 @@ struct Game
     int baseEnemyDamage = 10;
     Position inMap;
     ReturnTypes returnType = start;
-    int points = 0;
+    short int points[100] = {};
     short int roomsMoved = 0;
 };
 // Adiciona decrição para o item adquirido
@@ -207,8 +209,8 @@ void loopPlayer(Game &gameSaved)
     Player player;
     Position inMap;
     // Para os caracteres funcionarem
+    // setlocale(LC_ALL, "pt_BR.UTF-8");
     setlocale(LC_ALL, "pt_BR.UTF-8");
-
     //Caso o jogador vá para o invetário e volte para o jogo, essa função é a responsável por tudo voltar de onde parou
     if (gameSaved.returnType != Game::start)
     {
@@ -254,7 +256,7 @@ void loopPlayer(Game &gameSaved)
         
         
         currentPosition = newPosition;
-        hudPrint(player,gameSaved.points);
+        hudPrint(player,gameSaved.points[0]);
 
         
         // printMap(mapCurrent);
@@ -285,7 +287,7 @@ void loopPlayer(Game &gameSaved)
             gameSaved.player = player;
             gameSaved.map = mapCurrent;
             gameSaved.seed = seed;
-            gameSaved.points += (time(NULL) - StartTime)/ 30;
+            gameSaved.points[0] += (time(NULL) - StartTime)/ 30;
             gameSaved.returnType = Game::exit;
         }
         a = getch();
@@ -316,15 +318,15 @@ void loopPlayer(Game &gameSaved)
                 gameSaved.player = player;
                 gameSaved.map = mapCurrent;
                 gameSaved.seed = seed;
-                gameSaved.points += (time(NULL)-StartTime)% 30;
+                gameSaved.points[0] += (time(NULL)-StartTime)% 30;
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::inventory;
                 break;
-            case 27:
+            case 27: //ESC para sair
                 gameSaved.player = player;
                 gameSaved.map = mapCurrent;
                 gameSaved.seed = seed;
-                gameSaved.points += (time(NULL)-StartTime)% 30;
+                gameSaved.points[0] += (time(NULL)-StartTime)% 30;
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::saved;
                 break;
@@ -605,7 +607,7 @@ void loopPlayer(Game &gameSaved)
                             // Check if boss died from this hit
                             if (boss.health <= 0) {
                                 // updateBoss will handle clearing the art and marking position as -1
-                                gameSaved.points += 500; // pontos por ter matado o boss
+                                gameSaved.points[0] += 500; // pontos por ter matado o boss
                                 gameSaved.returnType = Game::victory;
                             }
                             bossAlreadyHit = true; // Mark boss as hit for this attack swing
@@ -618,7 +620,7 @@ void loopPlayer(Game &gameSaved)
                                     SetConsoleCursorPosition(hConsole, {(SHORT)mapCurrent.enemyList[i].position.x, (SHORT)mapCurrent.enemyList[i].position.y});
                                     if(mapCurrent.enemyList[i].position.x != 0 && mapCurrent.enemyList[i].position.y != 0) cout << ' ';
                                     
-                                    gameSaved.points+=10;
+                                    gameSaved.points[0]+=10;
                                     mapCurrent.map[mapCurrent.enemyList[i].position.y][mapCurrent.enemyList[i].position.x] = mapCurrent.entities::floor;
                                 }
                             }}

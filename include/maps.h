@@ -1,8 +1,11 @@
 #include "./map.h"
 #include "./enemy.h"
+#include <windows.h>
+
+
+
 #include <ctime>
 
-#include <windows.h>
 
 int Seed(int y, int x,int seed){ // Adicionando geração infinitas de mapas
     seed = (y*983)+(x*797)+(seed*929);

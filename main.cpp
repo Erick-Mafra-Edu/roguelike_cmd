@@ -6,6 +6,7 @@
 #include "./include/itemsmenu.hpp"
 #include "./include/victory.h"
 #include "./include/writeSave.cpp"
+#include "./include/convert.cpp"
 #include <locale.h>
 
 using namespace std;
@@ -75,10 +76,16 @@ int main()
             game.player = Player();
             game.returnType = Game::start;
         }
-        game.returnType == Game::saved ? selectMenu = 0 : selectMenu = menu();
+        if(game.returnType == Game::start || game.returnType == Game::saved) selectMenu = menu();
+        // game.returnType == Game::saved ? selectMenu = 0 : selectMenu = menu();
         switch (selectMenu)
         {
         case 0:
+            if (game.returnType == Game::start)
+            {
+                game.nick[0] = SetNick();
+            }
+            
             loopPlayer(game);
             
             break;

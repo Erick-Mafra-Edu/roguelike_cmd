@@ -1,6 +1,7 @@
 #include <iostream>
+// #include "./player.h"
 #include <fstream>
-using namespace std;
+// using namespace std;
 // void AllItems(Inventory &inventory){
 //     Items sword;
 //     // sword.durability = 100; // Para uma possível atualização futura
@@ -77,10 +78,10 @@ using namespace std;
 //     inventory.items[3] = shield;
 //     inventory.size = 4;
 // }
-int saveGame(Game &game){
+void saveGame(Game &game){
     //for testing i have used All Items Function
     //AllItems(test.player.inventory);
-    ofstream fileSave("gameSave.save");
+    std::ofstream fileSave("gameSave.save");
     fileSave << "[Roguelike ASCII]"<<endl;
     fileSave << "[Player]"<<endl;
     fileSave << "Health"<<"\t"<<game.player.health<<endl;
@@ -107,8 +108,17 @@ int saveGame(Game &game){
     fileSave << "[Game]" << endl;
     fileSave << "Seed" << "\t" << game.seed << endl;
     fileSave << "ReturnType" << "\t" << game.returnType << endl;
-    fileSave << "Points" << "\t" << game.points << endl;
     fileSave << "Rooms Moved" << "\t" << game.roomsMoved << endl;
-
+    bool playerEmpty = false;
+    for (size_t i = 0; !playerEmpty && i < 100; i++)
+    {
+        if (game.points[i] == 0 && game.nick[i].nick[0] == '\0')
+        {
+            playerEmpty = true;
+        }else{
+            fileSave << "Points" << "\t" << game.points[i] << endl;
+            fileSave << "Nick" << "\t" << game.nick[i].nick << endl;
+        }
+    }
     fileSave.close();
 }
