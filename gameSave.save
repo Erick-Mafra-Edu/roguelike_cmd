@@ -1,15 +1,15 @@
 [Roguelike ASCII]
 [Player]
-Health	60
+Health	90
 Damage	24
-Position	8	6
+Position	4	1
 [Inventory]
 [Items]
 Type	1
 Quantity	1
 Durability	0
 Damage	0
-Defense	12
+Defense	5
 Heal	0
 Art	|\===============/|
 | \_____________/ |
@@ -29,7 +29,32 @@ Art	|\===============/|
 
 MidX	9
 MidY	7
-Description	As runas esculpidas em sua face brilham fracamente quando o perigo se aproxima.	Muitos dizem que ele protege mais a alma do que o corpo — e isso o torna ainda mais raro.	Defesa:12
+Description	Forjado por monges que fizeram voto de silêncio, este escudo bloqueia mais do que ataques.	Ele cria uma aura de paz antinatural, abafando até o som da própria respiração.	Defesa:5
+Type	1
+Quantity	1
+Durability	0
+Damage	0
+Defense	13
+Heal	0
+Art	|\===============/|
+| \_____________/ |
+|      _____      |
+|     |     |     |
+|     |     |     |
+|  ====     ====  |
+|  ||         ||  |
+|  ||         ||  |
+|  ====     ====  |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    =========    |
+|=================|
+
+MidX	9
+MidY	7
+Description	Um escudo de metal negro polido que absorve o som ao redor.	Os inimigos hesitam ao atacar, como se algo os observasse por trás do vazio.	Defesa:13
 Type	2
 Quantity	1
 Durability	0
@@ -60,8 +85,8 @@ MidX	8
 MidY	9
 Description	Uma espada envolta em névoa negra. Cada golpe dela rouba um fragmento da alma do inimigo.	Dano:14	
 [Game]
-Seed	18527
+Seed	21652
 ReturnType	3
-Rooms Moved	1
-Points	55
-Nick	ERI
+Rooms Moved	4
+Points	36
+Nick	SAD

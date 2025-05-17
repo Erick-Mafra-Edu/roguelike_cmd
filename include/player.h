@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <thread>
 #include "./maps.h"
 #include "./items.h"
 #include "./primitiveTypes.h"
@@ -8,6 +9,10 @@
 #include "achievements.hpp"
 using namespace std;
 
+void SteepSound(){
+    int tone = rand() % 40 + 180; // entre 180 e 220 Hz
+    Beep(tone, 40);
+}
 // Criação do tipo Player
 struct Player
 {
@@ -18,8 +23,8 @@ struct Player
     int health = 100, shield = 0, damage = 10;
     void setPosition(int x, int y)
     {
-        int tone = rand() % 40 + 180; // entre 180 e 220 Hz
-        Beep(tone, 40);
+        thread Steep(SteepSound);
+        Steep.detach();
         position.X = x;
         position.Y = y;
     }
@@ -164,6 +169,15 @@ void descriptionItems(Items &item){
         default:
         break;
     }
+}
+void MimicDamageSound(){
+    Beep(900, 50);
+    Beep(700, 50);
+}
+void armadilhaSound(){
+    Beep(500, 30);   // início
+    Beep(1000, 50);  // aumento de tensão
+    Beep(300, 80);   // som grave tipo pancada
 }
 //Exibi o Hud do player
 void hudPrint(Player player, int points){
@@ -541,17 +555,16 @@ void loopPlayer(Game &gameSaved)
                 SetConsoleCursorPosition(hConsole,currentPosition);
                 // cout << " ";
                 player.health -= 10;
-                Beep(900, 50);
-                Beep(700, 50);
-
+                thread MimicDamage(MimicDamageSound);
+                MimicDamage.detach();
+                
                 break;
             }
 
             case mapCurrent.entities::armadilha:
             {
-                Beep(500, 30);   // início
-                Beep(1000, 50);  // aumento de tensão
-                Beep(300, 80);   // som grave tipo pancada
+                thread armadilhaDamage(armadilhaSound);
+                armadilhaDamage.detach();
                 player.health -= 10;
                 armadilha = true;
                 break;
