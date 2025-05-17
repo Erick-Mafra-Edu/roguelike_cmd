@@ -1,3 +1,5 @@
+#ifndef itemsmenu_hpp
+#define itemsmenu_hpp
 #include<windows.h>
 #include<string.h>
 #include<thread>
@@ -43,14 +45,14 @@ void ClearDescription(int midY, CONSOLE_SCREEN_BUFFER_INFO windowInfo){
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(console, &csbi);
     for (unsigned short int i = 0; i < 3; i++) // Imprime a descrição do item
-        {
-            SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
-            cout<<"                                                                                                        ";
-        }
-        SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
-        cout<<"                                                                                                             ";
-        SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
-        cout<<"                                                                                                             ";
+    {
+        SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
+        cout<<"                                                                                                        ";
+    }
+    SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
+    cout<<"                                                                                                             ";
+    SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
+    cout<<"                                                                                                             ";
 }
 // Organiza um inventário se consumido ou descartado
 void OrganizationInventory(Inventory &inventory, short int move){
@@ -67,10 +69,10 @@ void AllItems(Inventory &inventory){
     sword.damage = 10;
     sword.type = Items::weapon;
     sword.art = "      .         \n"
-        "     /:\\    (\"\"\")\n"
-        "     |:|     III\n"
-        "     |:|     III\n"
-        "     |:|     III\n"
+    "     /:\\    (\"\"\")\n"
+    "     |:|     III\n"
+    "     |:|     III\n"
+    "     |:|     III\n"
         "     |:|   __III__\n"
         "     |:| /:-.___,-:\\\n"
         "     |:| \\]  |:|  [/\n"
@@ -120,19 +122,19 @@ void AllItems(Inventory &inventory){
                 "   |          |\n"
                 "    \\        /   \n"
                 "     `._,._,'\n";
-    apple.midX = 15/2;
+                apple.midX = 15/2;
     inventory.items[2]=apple;
     Items shield;
     // shield.durability = 100; // Para uma possível atualização possível
     shield.quantity=1;
     shield.type = Items::armor;
     shield.art = "|\\===============/|\n"
-                 "| \\_____________/ |\n"
-                 "|      _____      |\n"
-                 "|     |     |     |\n"
-                 "|     |     |     |\n"
-                 "|  ====     ====  |\n"
-                 "|  ||         ||  |\n"
+    "| \\_____________/ |\n"
+    "|      _____      |\n"
+    "|     |     |     |\n"
+    "|     |     |     |\n"
+    "|  ====     ====  |\n"
+    "|  ||         ||  |\n"
                  "|  ||         ||  |\n"
                  "|  ====     ====  |\n"
                  "|    ||     ||    |\n"
@@ -145,6 +147,31 @@ void AllItems(Inventory &inventory){
     shield.midY = 15/2;
     inventory.items[3] = shield;
     inventory.size = 4;
+    Items adaga;
+    adaga.type = Items::weapon;
+    adaga.art =
+    " /\\\n",
+    "/__\\\n",
+    " ||\n",
+    " ||\n",
+    "/__\\\n";
+    adaga.midX = 4/2;
+    adaga.midY = 3/2;
+    inventory.items[4] = adaga;
+    Items besta;
+    besta.type = Items::weapon;
+    besta.art =
+    "   __||__\n"
+    "  /  ||  \\\n"
+    " |   ||   |\n"
+    " |___||___|\n"
+    "     ||\n"
+    "     ||\n"
+    "     ||\n"
+    "    /__\\\n";
+    besta.midX = 11/2;
+    besta.midY = 10/2;
+    inventory.items[5] = besta;
 }
 string clearString = "                                             \n"
 "                                             \n"
@@ -281,3 +308,4 @@ void ItemsMenu(Inventory &inventory, Player &player){
     } while (input != 27);
     system("cls");
 }
+#endif

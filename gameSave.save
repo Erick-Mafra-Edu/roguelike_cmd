@@ -1,11 +1,53 @@
 [Roguelike ASCII]
 [Player]
-Health	100
+Health	70
 Damage	10
-Position	0	0
+Position	3	2
 [Inventory]
 [Items]
+Type	1
+Quantity	1
+Durability	0
+Damage	0
+Defense	7
+Heal	0
+Art	|\===============/|
+| \_____________/ |
+|      _____      |
+|     |     |     |
+|     |     |     |
+|  ====     ====  |
+|  ||         ||  |
+|  ||         ||  |
+|  ====     ====  |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    ||     ||    |
+|    =========    |
+|=================|
+
+MidX	9
+MidY	7
+Description	Um escudo de metal negro polido que absorve o som ao redor.	Os inimigos hesitam ao atacar, como se algo os observasse por trás do vazio.	Defesa:7
+Type	0
+Quantity	1
+Durability	0
+Damage	0
+Defense	0
+Heal	12
+Art	     ,--./,-.
+    / #      \
+   |          |
+    \        /   
+     `._,._,'
+
+MidX	7
+MidY	7
+Description	Este item lhe cura	Cura:12	
 [Game]
-Seed	0
-ReturnType	2
-Rooms Moved	0
+Seed	10327
+ReturnType	3
+Rooms Moved	4
+Points	35
+Nick	EFF

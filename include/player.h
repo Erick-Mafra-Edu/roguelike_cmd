@@ -5,8 +5,9 @@
 #include "./primitiveTypes.h"
 #include "./boss.h"
 #include <windows.h>
-
+#include "achievements.hpp"
 using namespace std;
+
 // Criação do tipo Player
 struct Player
 {
@@ -79,6 +80,7 @@ struct Game
     Nick nick[100] = {Nick()};
     Player player;
     Gamemap map;
+    achievements unlockAchievements[16] = {achievements()};
     int seed;
     enum ReturnTypes
     {
