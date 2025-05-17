@@ -1,15 +1,15 @@
 [Roguelike ASCII]
 [Player]
-Health	70
-Damage	10
-Position	3	2
+Health	60
+Damage	24
+Position	8	6
 [Inventory]
 [Items]
 Type	1
 Quantity	1
 Durability	0
 Damage	0
-Defense	7
+Defense	12
 Heal	0
 Art	|\===============/|
 | \_____________/ |
@@ -29,25 +29,39 @@ Art	|\===============/|
 
 MidX	9
 MidY	7
-Description	Um escudo de metal negro polido que absorve o som ao redor.	Os inimigos hesitam ao atacar, como se algo os observasse por trás do vazio.	Defesa:7
-Type	0
+Description	As runas esculpidas em sua face brilham fracamente quando o perigo se aproxima.	Muitos dizem que ele protege mais a alma do que o corpo — e isso o torna ainda mais raro.	Defesa:12
+Type	2
 Quantity	1
 Durability	0
-Damage	0
+Damage	14
 Defense	0
-Heal	12
-Art	     ,--./,-.
-    / #      \
-   |          |
-    \        /   
-     `._,._,'
+Heal	0
+Art	      .         
+     /:\    (""")
+     |:|     III
+     |:|     III
+     |:|     III
+     |:|   __III__
+     |:| /:-.___,-:\
+     |:| \]  |:|  [/
+     |:|     |:|
+     |:|     |:|
+     |:|     |:|
+ /]  |:|  [\ |:|
+ \:-'"""`-:/ |:|
+   ""III""   |:|
+     III     |:|
+     III     |:|
+     III     |:|
+    (___)    \:/
+              "
 
-MidX	7
-MidY	7
-Description	Este item lhe cura	Cura:12	
+MidX	8
+MidY	9
+Description	Uma espada envolta em névoa negra. Cada golpe dela rouba um fragmento da alma do inimigo.	Dano:14	
 [Game]
-Seed	10327
+Seed	18527
 ReturnType	3
-Rooms Moved	4
-Points	35
-Nick	EFF
+Rooms Moved	1
+Points	55
+Nick	ERI

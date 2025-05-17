@@ -1,5 +1,6 @@
 #include<conio.h>
 #include<iostream>
+#include<thread>
 #include<windows.h>
 #include<string>
 
@@ -25,6 +26,19 @@ void CharacterDraw(string art,short int startX){
         pos = newPos + 1;
         lineOffset++;
     }
+}
+void TalkInitGame(){
+    string startTalk = "Nas páginas em branco do destino, uma nova história será escrita. "
+    "Com tinta de coragem e papel de incerteza, qual nome assinará este capítulo?";
+    for (size_t i = 0; i < startTalk.length(); i++)
+    {
+        int freq = 300+startTalk[i];
+        thread testSound(Beep,freq,150);
+        testSound.detach();
+        cout << startTalk[i];
+        Sleep(100);
+    }
+    
 }
 int Converter(int &letra,int input){
     // int input = 1;
@@ -284,6 +298,7 @@ string asciiAlphabet[27] = {
     "    \n"
 };
 Nick SetNick(){
+    TalkInitGame();
     Nick nick;
     int letra = 0;
     int input = 0;

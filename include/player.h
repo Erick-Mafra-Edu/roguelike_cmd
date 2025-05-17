@@ -230,6 +230,11 @@ void loopPlayer(Game &gameSaved)
     }
     else // Caso a de cima seja falsa, essa "cria / inicia" o jogo do 0
     {
+        for (size_t i = 0; i < 16; i++)
+        {
+            gameSaved.unlockAchievements[i] = AllAchievements().achievements[i];
+        }
+        
         seed = generateSeed();
         SelectMap = Seed(0,0,seed);
         // selecionando a sala inicial
