@@ -2,92 +2,19 @@
 // #include "./player.h"
 #include <fstream>
 // using namespace std;
-// void AllItems(Inventory &inventory){
-//     Items sword;
-//     // sword.durability = 100; // Para uma possível atualização futura
-//     sword.quantity = 1;
-//     sword.damage = 10;
-//     sword.type = Items::weapon;
-//     sword.art = "      .         \n"
-//         "     /:\\    (\"\"\")\n"
-//         "     |:|     III\n"
-//         "     |:|     III\n"
-//         "     |:|     III\n"
-//         "     |:|   __III__\n"
-//         "     |:| /:-.___,-:\\\n"
-//         "     |:| \\]  |:|  [/\n"
-//         "     |:|     |:|\n"
-//         "     |:|     |:|\n"
-//         "     |:|     |:|\n"
-//         " /]  |:|  [\\ |:|\n"
-//         " \\:-'\"\"\"`-:/ |:|\n"
-//         "   \"\"III\"\"   |:|\n"
-//         "     III     |:|\n"
-//         "     III     |:|\n"
-//         "     III     |:|\n"
-//         "    (___)    \\:/\n"
-//         "              \"\n";
-//     sword.midX = 16/2;
-//     sword.midY = 19/2;
-//     inventory.items[0] = sword;
-//     Items potion;
-//     potion.type = Items::consumables;
-//     potion.art = 
-//     "   _\n"
-//     "  |=|\n"
-//     "  | |\n"
-//     "  | |\n"
-//     " /   \\\n"
-//     ".     .\n"
-//     "|-----|\n"
-//     "|     |\n"
-//     "|-----|\n";
-//     potion.midX = 7/2;
-//     potion.midY = 10;
-//     inventory.items[1] = potion;
-//     Items apple;
-//     apple.type = Items::consumables;
-//     apple.art = "     ,--./,-.\n"
-//                 "    / #      \\\n"
-//                 "   |          |\n"
-//                 "    \\        /   \n"
-//                 "     `._,._,'\n";
-//     apple.midX = 15/2;
-//     inventory.items[2]=apple;
-//     Items shield;
-//     // shield.durability = 100; // Para uma possível atualização possível
-//     shield.quantity=1;
-//     shield.type = Items::armor;
-//     shield.art = "|\\===============/|\n"
-//                  "| \\_____________/ |\n"
-//                  "|      _____      |\n"
-//                  "|     |     |     |\n"
-//                  "|     |     |     |\n"
-//                  "|  ====     ====  |\n"
-//                  "|  ||         ||  |\n"
-//                  "|  ||         ||  |\n"
-//                  "|  ====     ====  |\n"
-//                  "|    ||     ||    |\n"
-//                  "|    ||     ||    |\n"
-//                  "|    ||     ||    |\n"
-//                  "|    ||     ||    |\n"
-//                  "|    =========    |\n"
-//                  "|=================|\n";
-//     shield.midX = 19/2;
-//     shield.midY = 15/2;
-//     inventory.items[3] = shield;
-//     inventory.size = 4;
-// }
+
 void saveGame(Game &game){
     //for testing i have used All Items Function
     //AllItems(test.player.inventory);
-    std::ofstream fileSave("gameSave.save");
+    std::ofstream fileSave("C:\\Users\\Erick\\roguelike_cmd\\gameSave.save");
     fileSave << "[Roguelike ASCII]"<<endl;
     fileSave << "[Player]"<<endl;
     fileSave << "Health"<<"\t"<<game.player.health<<endl;
     fileSave << "Damage"<<"\t"<<game.player.damage<<endl;
     fileSave << "Position"<<"\t"<<game.player.position.X<<"\t"<<game.player.position.Y<<endl;
+    fileSave << "Shield"<<"\t"<<game.player.shield<<endl;
     fileSave << "[Inventory]"<<endl;
+    fileSave << "Size" << "\t" << game.player.inventory.size << endl;   
     fileSave << "[Items]"<<endl;
     for (size_t i = 0; i < game.player.inventory.size; i++)
     {
@@ -108,6 +35,7 @@ void saveGame(Game &game){
     fileSave << "[Game]" << endl;
     fileSave << "Seed" << "\t" << game.seed << endl;
     fileSave << "ReturnType" << "\t" << game.returnType << endl;
+    fileSave << "inMap"<<"\t"<<game.inMap.x << "\t" << game.inMap.y <<endl;
     fileSave << "Rooms Moved" << "\t" << game.roomsMoved << endl;
     bool playerEmpty = false;
     for (size_t i = 0; !playerEmpty && i < 100; i++)
@@ -117,7 +45,7 @@ void saveGame(Game &game){
             playerEmpty = true;
         }else{
             fileSave << "Points" << "\t" << game.points[i] << endl;
-            fileSave << "Nick" << "\t" << game.nick[i].nick << endl;
+            fileSave << "Nick" << "\t" << game.nick[i].nick[0] << game.nick[i].nick[1] << game.nick[i].nick[2] << endl;
         }
     }
     fileSave.close();

@@ -7,12 +7,13 @@ using namespace std;
 void cleanmenu(short int pos)
 {
     setlocale(LC_ALL, "pt_BR.UTF-8");
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 16});
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 17});
     cout << "Iniciar   \n";
     cout << "Informações   \n";
+    cout << "Podio      \n";
     cout << "Sair   \n";
     cout << "Você pode precionar ESC para sair e ENTER para selecionar;)";
-    pos += 16;
+    pos += 17;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, pos});
 }
 int menu()
@@ -74,6 +75,10 @@ int menu()
             break;
         case 2:
             cleanmenu(position);
+            cout << "> Podio \n";
+            break;
+        case 3:
+            cleanmenu(position);
             cout << "> Sair \n";
             break;
         default:
@@ -92,7 +97,7 @@ int menu()
             // Sleep(10); // pequena pausa
             Beep(900, 20);
             // cout<<"Up";
-            position <= 0 ? position = 2 : position--;
+            position <= 0 ? position = 3 : position--;
             break;
         case 80:
         case 's':
@@ -100,7 +105,7 @@ int menu()
             // Sleep(10); // pequena pausa
             Beep(900, 20);
             // cout<<"Down";
-            position >= 2 ? position = 0 : position++;
+            position >= 3 ? position = 0 : position++;
             break;
         case 75:
         case 'a':
@@ -125,6 +130,9 @@ int menu()
                 break;
             case 2:
                 return 2;
+                break;
+            case 3:
+                return 3;
                 break;
             }
             break;

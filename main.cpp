@@ -6,15 +6,22 @@
 #include "./include/itemsmenu.hpp"
 #include "./include/victory.h"
 #include "./include/writeSave.cpp"
+#include "./include/readSave.cpp"
 #include "./include/convert.cpp"
+#include "./include/podio.cpp"
 #include <locale.h>
 
 using namespace std;
-
+void SetColor(int textColor, int bgColor) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD finalColor = bgColor << 4 | textColor;
+    SetConsoleTextAttribute(hConsole, finalColor);
+}
 int main()
 {
     SetConsoleTitle("RogueLike Game");
     system("cls");
+    
     SetConsoleOutputCP(CP_UTF8); // Definindo o console para usar caracteres UTF-8 (SAÍDA)
     SetConsoleCP(CP_UTF8);       // Definindo o console para usar caracteres UTF-8 (ENTRADA)
     CONSOLE_SCREEN_BUFFER_INFO windowSize;
@@ -31,6 +38,7 @@ int main()
     if (windowSize.dwSize.X < 145)
     {
         SetConsoleTitle("Please Resize Game");
+        SetColor(12, 0);
         cout << "Waiting you resize window please place in fullscreen";
         do
         {
@@ -57,6 +65,7 @@ int main()
     game.player = Player();
     int selectMenu;
     game.returnType = Game::start;
+    int indexNick = readSave(game);
     do
     {
         if (game.returnType == Game::victory)
@@ -66,15 +75,17 @@ int main()
             game.player = Player();
             game.returnType = Game::start;
         }
-        if (game.returnType == Game::inventory){
-                ItemsMenu(game.player.inventory,game.player);
-                //cout<<game.returnType;
-                game.returnType = Game::saved;
+        if (game.returnType == Game::inventory)
+        {
+            ItemsMenu(game.player.inventory,game.player);
+            //cout<<game.returnType;
+            game.returnType = Game::saved;
         }else if (game.returnType == Game::exit)
         {
+            game.returnType = Game::start;
+            saveGame(game);
             game = Game();
             game.player = Player();
-            game.returnType = Game::start;
         }
         if(game.returnType == Game::start || game.returnType == Game::saved) selectMenu = menu();
         // game.returnType == Game::saved ? selectMenu = 0 : selectMenu = menu();
@@ -83,9 +94,8 @@ int main()
         case 0:
             if (game.returnType == Game::start)
             {
-                game.nick[0] = SetNick();
+                game.nick[indexNick] = SetNick();
             }
-            
             loopPlayer(game);
             
             break;
@@ -109,12 +119,13 @@ int main()
             cout << "Pressione qualquer tecla para retornar ao menu...";
             getch(); // Aguardando uma tecla ser pressionada
             break;
-
+            case 2:
+                system("cls");
+                displayRanking(game);
+            break;
         }
-    } while (selectMenu != 2);
-
-    saveGame(game);
-
+    } while (selectMenu != 3);
+    if(game.returnType != Game::start) saveGame(game);
     system("cls");
     return 0;
 }

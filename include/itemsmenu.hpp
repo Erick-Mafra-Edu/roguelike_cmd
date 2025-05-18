@@ -129,12 +129,12 @@ void AllItems(Inventory &inventory){
     shield.quantity=1;
     shield.type = Items::armor;
     shield.art = "|\\===============/|\n"
-    "| \\_____________/ |\n"
-    "|      _____      |\n"
-    "|     |     |     |\n"
-    "|     |     |     |\n"
-    "|  ====     ====  |\n"
-    "|  ||         ||  |\n"
+                 "| \\_____________/ |\n"
+                 "|      _____      |\n"
+                 "|     |     |     |\n"
+                 "|     |     |     |\n"
+                 "|  ====     ====  |\n"
+                 "|  ||         ||  |\n"
                  "|  ||         ||  |\n"
                  "|  ====     ====  |\n"
                  "|    ||     ||    |\n"
@@ -172,6 +172,7 @@ void AllItems(Inventory &inventory){
     besta.midX = 11/2;
     besta.midY = 10/2;
     inventory.items[5] = besta;
+    
 }
 string clearString = "                                             \n"
 "                                             \n"

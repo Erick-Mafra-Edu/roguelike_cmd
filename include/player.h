@@ -84,6 +84,8 @@ struct Game
 {
     Nick nick[100] = {Nick()};
     Player player;
+    int XpPoints;
+    short int level;
     Gamemap map;
     achievements unlockAchievements[16] = {achievements()};
     int seed;
@@ -174,6 +176,13 @@ void MimicDamageSound(){
     Beep(900, 50);
     Beep(700, 50);
 }
+void PrintAtackInEnemy(HANDLE hConsole,Position &attackedCoord){
+    SetConsoleCursorPosition(hConsole, {(SHORT)attackedCoord.x, (SHORT)attackedCoord.y});
+    cout << "*";
+    Sleep(100);
+    SetConsoleCursorPosition(hConsole, {(SHORT)attackedCoord.x, (SHORT)attackedCoord.y});
+    cout << "!";
+}
 void armadilhaSound(){
     Beep(500, 30);   // início
     Beep(1000, 50);  // aumento de tensão
@@ -227,11 +236,16 @@ void loopPlayer(Game &gameSaved)
     // Para os caracteres funcionarem
     // setlocale(LC_ALL, "pt_BR.UTF-8");
     setlocale(LC_ALL, "pt_BR.UTF-8");
-    //Caso o jogador vá para o invetário e volte para o jogo, essa função é a responsável por tudo voltar de onde parou
+    //Caso o jogador vá para o invetário e volte para o jogo, essa função é a responsável de por tudo de voltar de onde parou
     if (gameSaved.returnType != Game::start)
     {
-        mapCurrent = gameSaved.map;
+        short int x = gameSaved.inMap.x;
+        short int y = gameSaved.inMap.y;
         seed = gameSaved.seed;
+        SelectMap = Seed(x,y,seed);
+        // selecionando a sala do Save
+        mapa(mapCurrent,SelectMap);
+        // map mapCurrent = mapa(3);
         printMap(mapCurrent);
         currentPosition = gameSaved.player.position;
         newPosition = gameSaved.player.position;
@@ -602,8 +616,7 @@ void loopPlayer(Game &gameSaved)
                             SetConsoleCursorPosition(hConsole,{attackedCoord});
                             cout << " ";
                         } 
-                        
-                }
+                    }
                 }    
                 // Toda a função de pontos e morte dos inimigos
                 bossAlreadyHit = false;
@@ -627,19 +640,21 @@ void loopPlayer(Game &gameSaved)
                             // Check if boss died from this hit
                             if (boss.health <= 0) {
                                 // updateBoss will handle clearing the art and marking position as -1
+                                gameSaved.XpPoints += 500; // pontos por matar o boss
                                 gameSaved.points[0] += 500; // pontos por ter matado o boss
                                 gameSaved.returnType = Game::victory;
                             }
                             bossAlreadyHit = true; // Mark boss as hit for this attack swing
-                            
                             }
                             }else{
                             if (mapCurrent.enemyList[i].position.x == currentPosition.X + x && mapCurrent.enemyList[i].position.y == currentPosition.Y + y && mapCurrent.enemyList[i].health > 0){
                                 mapCurrent.enemyList[i].health -= player.damage;
+                                COORD attackedCoord = { (SHORT)(mapCurrent.enemyList[i].position.x), (SHORT)(mapCurrent.enemyList[i].position.y) };
+                                PrintAtackInEnemy(hConsole,mapCurrent.enemyList[i].position);
                                 if(mapCurrent.enemyList[i].health <= 0){
                                     SetConsoleCursorPosition(hConsole, {(SHORT)mapCurrent.enemyList[i].position.x, (SHORT)mapCurrent.enemyList[i].position.y});
                                     if(mapCurrent.enemyList[i].position.x != 0 && mapCurrent.enemyList[i].position.y != 0) cout << ' ';
-                                    
+                                    gameSaved.XpPoints += 10+rand()%10;
                                     gameSaved.points[0]+=10;
                                     mapCurrent.map[mapCurrent.enemyList[i].position.y][mapCurrent.enemyList[i].position.x] = mapCurrent.entities::floor;
                                 }
