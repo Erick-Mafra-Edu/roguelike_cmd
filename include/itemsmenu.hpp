@@ -1,10 +1,11 @@
 #ifndef itemsmenu_hpp
 #define itemsmenu_hpp
-#include<windows.h>
-#include<string.h>
-#include<thread>
+#include <windows.h>
+#include <string.h>
+#include <thread>
 using namespace std;
-void Draw(string art,short int startX){
+void Draw(string art, short int startX, DWORD color = ((0 << 4) | 7))
+{
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(console, &csbi);
@@ -17,20 +18,21 @@ void Draw(string art,short int startX){
     string line;
     size_t pos = 0, newPos;
     // Imprime os itens
+    SetConsoleTextAttribute(console, color);
     while ((newPos = art.find('\n', pos)) != string::npos)
     {
         counter++;
         line = art.substr(pos, newPos - pos);
-        SetConsoleCursorPosition(console, { midX, (SHORT)(midY + lineOffset) });
+        SetConsoleCursorPosition(console, {midX, (SHORT)(midY + lineOffset)});
         cout << line;
         pos = newPos + 1;
         lineOffset++;
     }
-    
-    
+    SetConsoleTextAttribute(console, ((0 << 4) | 7));
 }
-//Som
-void consumablesSound() {
+// Som
+void consumablesSound()
+{
     Beep(450, 40);
     Sleep(30);
     Beep(400, 40);
@@ -40,58 +42,62 @@ void consumablesSound() {
     Beep(300, 70);
 }
 // Limpa as descrições
-void ClearDescription(int midY, CONSOLE_SCREEN_BUFFER_INFO windowInfo){
+void ClearDescription(int midY, CONSOLE_SCREEN_BUFFER_INFO windowInfo)
+{
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(console, &csbi);
     for (unsigned short int i = 0; i < 3; i++) // Imprime a descrição do item
     {
-        SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
-        cout<<"                                                                                                        ";
+        SetConsoleCursorPosition(console, {1, (SHORT)(midY + 21 + i)});
+        cout << "                                                                                                        ";
     }
     SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
-    cout<<"                                                                                                             ";
+    cout << "                                                                                                             ";
     SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
-    cout<<"                                                                                                             ";
+    cout << "                                                                                                             ";
 }
 // Organiza um inventário se consumido ou descartado
-void OrganizationInventory(Inventory &inventory, short int move){
-    for(int i = move+1; i < inventory.size + 1; i++){
-        inventory.items[i-1] = inventory.items[i];
+void OrganizationInventory(Inventory &inventory, short int move)
+{
+    for (int i = move + 1; i < inventory.size + 1; i++)
+    {
+        inventory.items[i - 1] = inventory.items[i];
     }
     inventory.size--;
 }
 // Todos os itens... Definição dos itens e das características de cada um
-void AllItems(Inventory &inventory){
+void AllItems(Inventory &inventory)
+{
     Items sword;
     // sword.durability = 100; // Para uma possível atualização futura
     sword.quantity = 1;
     sword.damage = 10;
     sword.type = Items::weapon;
     sword.art = "      .         \n"
-    "     /:\\    (\"\"\")\n"
-    "     |:|     III\n"
-    "     |:|     III\n"
-    "     |:|     III\n"
-        "     |:|   __III__\n"
-        "     |:| /:-.___,-:\\\n"
-        "     |:| \\]  |:|  [/\n"
-        "     |:|     |:|\n"
-        "     |:|     |:|\n"
-        "     |:|     |:|\n"
-        " /]  |:|  [\\ |:|\n"
-        " \\:-'\"\"\"`-:/ |:|\n"
-        "   \"\"III\"\"   |:|\n"
-        "     III     |:|\n"
-        "     III     |:|\n"
-        "     III     |:|\n"
-        "    (___)    \\:/\n"
-        "              \"\n";
-    sword.midX = 16/2;
-    sword.midY = 19/2;
+                "     /:\\    (\"\"\")\n"
+                "     |:|     III\n"
+                "     |:|     III\n"
+                "     |:|     III\n"
+                "     |:|   __III__\n"
+                "     |:| /:-.___,-:\\\n"
+                "     |:| \\]  |:|  [/\n"
+                "     |:|     |:|\n"
+                "     |:|     |:|\n"
+                "     |:|     |:|\n"
+                " /]  |:|  [\\ |:|\n"
+                " \\:-'\"\"\"`-:/ |:|\n"
+                "   \"\"III\"\"   |:|\n"
+                "     III     |:|\n"
+                "     III     |:|\n"
+                "     III     |:|\n"
+                "    (___)    \\:/\n"
+                "              \"\n";
+    sword.midX = 16 / 2;
+    sword.midY = 19 / 2;
     inventory.items[0] = sword;
     // Items chest;
-    //chest.art = "         __________\n"
+    // chest.art = "         __________\n"
     // "        /\\____;;___\\\n"
     // "       | /         /\n"
     // "       `. ())oo() .\n"
@@ -102,17 +108,17 @@ void AllItems(Inventory &inventory){
     //     chest.midX = 21/2;
     Items potion;
     potion.type = Items::consumables;
-    potion.art = 
-    "   _\n"
-    "  |=|\n"
-    "  | |\n"
-    "  | |\n"
-    " /   \\\n"
-    ".     .\n"
-    "|-----|\n"
-    "|     |\n"
-    "|-----|\n";
-    potion.midX = 7/2;
+    potion.art =
+        "   _\n"
+        "  |=|\n"
+        "  | |\n"
+        "  | |\n"
+        " /   \\\n"
+        ".     .\n"
+        "|-----|\n"
+        "|     |\n"
+        "|-----|\n";
+    potion.midX = 7 / 2;
     potion.midY = 10;
     inventory.items[1] = potion;
     Items apple;
@@ -122,11 +128,11 @@ void AllItems(Inventory &inventory){
                 "   |          |\n"
                 "    \\        /   \n"
                 "     `._,._,'\n";
-                apple.midX = 15/2;
-    inventory.items[2]=apple;
+    apple.midX = 15 / 2;
+    inventory.items[2] = apple;
     Items shield;
     // shield.durability = 100; // Para uma possível atualização possível
-    shield.quantity=1;
+    shield.quantity = 1;
     shield.type = Items::armor;
     shield.art = "|\\===============/|\n"
                  "| \\_____________/ |\n"
@@ -143,166 +149,209 @@ void AllItems(Inventory &inventory){
                  "|    ||     ||    |\n"
                  "|    =========    |\n"
                  "|=================|\n";
-    shield.midX = 19/2;
-    shield.midY = 15/2;
+    shield.midX = 19 / 2;
+    shield.midY = 15 / 2;
     inventory.items[3] = shield;
     inventory.size = 4;
     Items adaga;
     adaga.type = Items::weapon;
     adaga.art =
-    " /\\\n",
+        " /\\\n",
     "/__\\\n",
     " ||\n",
     " ||\n",
     "/__\\\n";
-    adaga.midX = 4/2;
-    adaga.midY = 3/2;
+    adaga.midX = 4 / 2;
+    adaga.midY = 3 / 2;
     inventory.items[4] = adaga;
     Items besta;
     besta.type = Items::weapon;
     besta.art =
-    "   __||__\n"
-    "  /  ||  \\\n"
-    " |   ||   |\n"
-    " |___||___|\n"
-    "     ||\n"
-    "     ||\n"
-    "     ||\n"
-    "    /__\\\n";
-    besta.midX = 11/2;
-    besta.midY = 10/2;
+        "   ______\n"
+        "  /  ||  \\\n"
+        " |   ||   |\n"
+        " |___ ___|\n"
+        "     ||\n"
+        "     ||\n"
+        "     ||\n"
+        "    /__\\\n";
+    besta.midX = 11 / 2;
+    besta.midY = 10 / 2;
     inventory.items[5] = besta;
-    
+    Items goldenapple;
+    goldenapple.type = Items::consumables;
+    goldenapple.art = "     ,--./,-.\n"
+                      "    / #      \\\n"
+                      "   |          |\n"
+                      "    \\        /   \n"
+                      "     `._,._,'\n";
+    goldenapple.midX = 15 / 2;
+    goldenapple.color = (0 << 4) | 14;
+    goldenapple.damage = 100;
+    goldenapple.heal = 100;
+    inventory.items[3] = goldenapple;
 }
 string clearString = "                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n"
-"                                             \n";
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n"
+                     "                                             \n";
 // Toda a funcionalidade do menu dos itens
-void ItemsMenu(Inventory &inventory, Player &player){
+void ItemsMenu(Inventory &inventory, Player &player)
+{
     system("cls");
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO windowInfo;
     GetConsoleScreenBufferInfo(console, &windowInfo);
-    //Debug do tamanho do inventário
-    // cout<<windowInfo.dwSize.X<<endl;
-    // cout<<windowInfo.dwSize.Y;
+    // Debug do tamanho do inventário
+    //  cout<<windowInfo.dwSize.X<<endl;
+    //  cout<<windowInfo.dwSize.Y;
     short int CalcRap = windowInfo.dwSize.X - 1;
     short int MidCalc = windowInfo.dwSize.X - 1;
     SetConsoleCursorPosition(console, {CalcRap, 0});
-    short int midY = windowInfo.dwSize.Y%2==0?windowInfo.dwSize.Y/2-1:windowInfo.dwSize.Y/2;
-    short int midX = windowInfo.dwSize.X/2;
-    for (short int i = 0; i < windowInfo.dwSize.Y; i++){
+    short int midY = windowInfo.dwSize.Y % 2 == 0 ? windowInfo.dwSize.Y / 2 - 1 : windowInfo.dwSize.Y / 2;
+    short int midX = windowInfo.dwSize.X / 2;
+    for (short int i = 0; i < windowInfo.dwSize.Y; i++)
+    {
         SetConsoleCursorPosition(console, {CalcRap, i});
-        cout<<"|";
+        cout << "|";
         SetConsoleCursorPosition(console, {0, i});
-        cout<<"|";
-        if (i==midY) {
+        cout << "|";
+        if (i == midY)
+        {
             MidCalc = windowInfo.dwSize.X - 4;
             SetConsoleCursorPosition(console, {MidCalc, i});
-            cout<<"D ->";
-            SetConsoleCursorPosition(console, {0, i});    
-            cout<<"<- A";
+            cout << "D ->";
+            SetConsoleCursorPosition(console, {0, i});
+            cout << "<- A";
         }
     }
-    midX -= 20/2;
-    midY -= 19/2;
-    SetConsoleCursorPosition(console, {midX, midY});  
-    
+    midX -= 20 / 2;
+    midY -= 19 / 2;
+    SetConsoleCursorPosition(console, {midX, midY});
+
     int input;
     int move = 0;
     do
-    {   
-        SetConsoleCursorPosition(console, {midX, (SHORT)(midY+10)});
-        Draw(clearString,30);
-        ClearDescription(midY,windowInfo);
+    {
+        SetConsoleCursorPosition(console, {midX, (SHORT)(midY + 10)});
+        Draw(clearString, 30);
+        ClearDescription(midY, windowInfo);
         if (inventory.items[move].type == Items::empty)
         {
-            inventory.items[move].description[0]="Você encontrou o lendário item do nada absoluto!";
-            inventory.items[move].description[1]="...que não faz nada mesmo.";
-            inventory.items[move].description[2]="(Slot vazio.)";
-        }else{
-        Draw(inventory.items[move].art,inventory.items[move].midX);
+            inventory.items[move].description[0] = "Você encontrou o lendário item do nada absoluto!";
+            inventory.items[move].description[1] = "...que não faz nada mesmo.";
+            inventory.items[move].description[2] = "(Slot vazio.)";
         }
-        SetConsoleCursorPosition(console, {1, (SHORT)(midY+9+11)});
+        else
+        {
+            Draw(inventory.items[move].art, inventory.items[move].midX, inventory.items[move].color);
+        }
+        SetConsoleCursorPosition(console, {1, (SHORT)(midY + 9 + 11)});
         for (unsigned short int i = 0; i < windowInfo.dwSize.X - 2; i++) // Imprime a linha entre o item e a descrição
         {
-            cout<<"-";
+            cout << "-";
         }
         for (unsigned short int i = 0; i < 3; i++) // Imprime a descrição do item
         {
-            SetConsoleCursorPosition(console, {1, (SHORT)(midY+21+i)});
-            cout<<inventory.items[move].description[i];
+            SetConsoleCursorPosition(console, {1, (SHORT)(midY + 21 + i)});
+            cout << inventory.items[move].description[i];
         }
         SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 1)});
-        if(inventory.items[move].type == Items::consumables){
+        if (inventory.items[move].type == Items::consumables || inventory.items[move].type == Items::goldenApple)
+        {
             cout << " Pressione C para consumir.";
-        }else if(inventory.items[move].type != Items::empty){
+        }
+        else if (inventory.items[move].type != Items::empty)
+        {
             cout << " Pressione X para descartar.";
         }
         input = getch();
         switch (input)
         {
-        case 'x': case 'X':
-            if(inventory.items[move].type != Items::empty){
+        case 'x':
+        case 'X':
+            if (inventory.items[move].type != Items::empty)
+            {
                 SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
                 cout << "Esse item é importante, deseja jogar fora mesmo?    S ou N";
-                switch (getch()){
-                    case 's' : case 'S':
+                switch (getch())
+                {
+                case 's':
+                case 'S':
+                {
+                    // Player perde defesa e dano ao jogar fora arma ou armadura
+                    if (inventory.items->armor)
                     {
-                        //Player perde defesa e dano ao jogar fora arma ou armadura
-                        if(inventory.items->armor){
-                            player.shield -= inventory.items[move].defense;
-                        }else if(inventory.items->weapon){
-                            player.damage -= inventory.items[move].damage;
-                        }
-                        OrganizationInventory(inventory,move);
-                        Draw(clearString,30);
-                        ClearDescription(midY,windowInfo);
-                        move > 1 ? move-- : move = 0;
-                        
+                        player.shield -= inventory.items[move].defense;
                     }
-                    case 'n' : case 'N':
+                    else if (inventory.items->weapon)
+                    {
+                        player.damage -= inventory.items[move].damage;
+                    }
+                    OrganizationInventory(inventory, move);
+                    Draw(clearString, 30);
+                    ClearDescription(midY, windowInfo);
+                    move > 1 ? move-- : move = 0;
+                }
+                case 'n':
+                case 'N':
                     break;
                 }
             }
-        break;
-        case 'c': case 'C':
-            if(inventory.items[move].type == Items::consumables){
+            break;
+        case 'c':
+        case 'C':
+            if (inventory.items[move].type == Items::consumables || inventory.items[move].type == Items::goldenApple)
+            {
+                if (inventory.items[move].type == Items::goldenApple)
+                {
+                    player.color = (0 << 4) | 14;
+                    player.damage += inventory.items[move].damage;
+                    player.health += inventory.items[move].heal;
+                }
                 player.health += inventory.items[move].heal;
                 player.health > 100 ? player.health = 100 : player.health;
-                OrganizationInventory(inventory,move);
-                Draw(clearString,30);
-                ClearDescription(midY,windowInfo);
+                OrganizationInventory(inventory, move);
+                Draw(clearString, 30);
+                ClearDescription(midY, windowInfo);
                 move > 1 ? move-- : move = 0;
                 thread sound(consumablesSound);
                 sound.detach();
-            }else{
+            }
+            else
+            {
                 SetConsoleCursorPosition(console, {1, (SHORT)(windowInfo.dwSize.Y - 2)});
                 cout << "Esse item não é consumível";
                 break;
             }
-        break;
-        case 'd': case 77:
-                move > inventory.size - 2 ? move = 0 : move++;
             break;
-        case 'a': case 75:
-                if(inventory.size > 0) move < 1 ? move = inventory.size - 1 : move--;
+        case 'd':
+        case 77:
+            move > inventory.size - 2 ? move = 0 : move++;
+            break;
+        case 'a':
+        case 75:
+            if (inventory.size > 0)
+                move < 1 ? move = inventory.size - 1 : move--;
+            break;
+        case 'l':
+        case 'L':
+            AllItems(inventory);
             break;
         }
         // AllItems(inventory);

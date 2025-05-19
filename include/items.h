@@ -4,9 +4,11 @@
 using namespace std;
 
 // Criação dos itens, usado para se fazer os itens para o jogo
-struct Items{
+struct Items
+{
     enum TypeofItems
     {
+        goldenApple,
         consumables,
         armor,
         weapon,
@@ -24,8 +26,9 @@ struct Items{
         luck,
     };
     string art;
+    DWORD color = (0 << 4) | 7;
     short int midX, midY;
-    string description[3] ={"", "", ""};
+    string description[3] = {"", "", ""};
 };
 
 struct Inventory

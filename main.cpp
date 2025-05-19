@@ -12,7 +12,8 @@
 #include <locale.h>
 
 using namespace std;
-void SetColor(int textColor, int bgColor) {
+void SetColor(int textColor, int bgColor)
+{
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD finalColor = bgColor << 4 | textColor;
     SetConsoleTextAttribute(hConsole, finalColor);
@@ -21,7 +22,7 @@ int main()
 {
     SetConsoleTitle("RogueLike Game");
     system("cls");
-    
+
     SetConsoleOutputCP(CP_UTF8); // Definindo o console para usar caracteres UTF-8 (SAÍDA)
     SetConsoleCP(CP_UTF8);       // Definindo o console para usar caracteres UTF-8 (ENTRADA)
     CONSOLE_SCREEN_BUFFER_INFO windowSize;
@@ -59,6 +60,7 @@ int main()
             SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {52, 0});
             cout << "     ";
         } while (windowSize.dwSize.X < 145);
+        SetColor(7, 0);
     }
     // cout<<windowSize.dwSize.X;
     Game game;
@@ -77,17 +79,19 @@ int main()
         }
         if (game.returnType == Game::inventory)
         {
-            ItemsMenu(game.player.inventory,game.player);
-            //cout<<game.returnType;
+            ItemsMenu(game.player.inventory, game.player);
+            // cout<<game.returnType;
             game.returnType = Game::saved;
-        }else if (game.returnType == Game::exit)
+        }
+        else if (game.returnType == Game::exit)
         {
             game.returnType = Game::start;
             saveGame(game);
             game = Game();
             game.player = Player();
         }
-        if(game.returnType == Game::start || game.returnType == Game::saved) selectMenu = menu();
+        if (game.returnType == Game::start || game.returnType == Game::saved)
+            selectMenu = menu();
         // game.returnType == Game::saved ? selectMenu = 0 : selectMenu = menu();
         switch (selectMenu)
         {
@@ -97,11 +101,11 @@ int main()
                 game.nick[indexNick] = SetNick();
             }
             loopPlayer(game);
-            
+
             break;
-            case 1: // "Informações" foi selecionadas
+        case 1: // "Informações" foi selecionadas
             system("cls");
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0,0});
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, 0});
             cout << "Game Information:\n";
             cout << "- Use W, A, S, D para se mover.\n";
             cout << "- Pressione ESPAÇO para dar um ataque em área.\n";
@@ -119,13 +123,14 @@ int main()
             cout << "Pressione qualquer tecla para retornar ao menu...";
             getch(); // Aguardando uma tecla ser pressionada
             break;
-            case 2:
-                system("cls");
-                displayRanking(game);
+        case 2:
+            system("cls");
+            displayRanking(game);
             break;
         }
     } while (selectMenu != 3);
-    if(game.returnType != Game::start) saveGame(game);
+    if (game.returnType != Game::start)
+        saveGame(game);
     system("cls");
     return 0;
 }
