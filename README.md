@@ -1,10 +1,44 @@
 # roguelike_cmd
 
+## 📅 Atualizações de Maio de 2025
 
-### Descrição.
+### ✅ Funcionalidades Adicionadas
 
+- **🎯 Itens no Jogo**
+  - Adicionados **3 novos itens**, incluindo o item especial `goldenapple`.
 
-Tramalho da Univali M1
+- **📈 Tela de Scoreboard**
+  - Nova tela que exibe a **pontuação dos jogadores** após o término da partida.
+
+- **⚔️ Efeito de Ataque**
+  - Implementado efeito visual ao atacar inimigos, melhorando o feedback visual ao jogador.
+
+- **🔊 Sons com Threads**
+  - Sons do jogo agora são gerenciados em **threads separadas**, permitindo que o áudio toque sem travar a lógica principal.
+
+- **🏆 Conquistas**
+  - Adicionados nomes e descrições para **conquistas desbloqueáveis** durante a jogatina.
+
+### 🛠️ Correções e Melhorias
+
+- **💾 Sistema de Save**
+  - Corrigido bug no sistema de salvamento.
+  - Agora salva também o **apelido do jogador (nick)**.
+  - Processamento de entrada convertido para `String Art`.
+
+- **🖥️ Mensagem de Início**
+  - Mensagem de boas-vindas exibida ao iniciar o jogo.
+
+---
+
+**Commits relacionados:**
+- `d485147` | adicionamos 3 itens dentre eles goldenapple
+- `a3eea9c` | Save fix, Scoreboard Screen, Attack effect
+- `f29ae55` | Using Thread to Sounds
+- `8dccfee` | Mensagem de inicio do jogo
+- `181ef56` | Adding achivements name and description
+- `b1dcdc4` | Add Nick to Save and Process Input to String Art
+
 
 ## Links
 
