@@ -269,7 +269,7 @@ void loopPlayer(Game &gameSaved)
         // selecionando a sala do Save
         mapa(mapCurrent, SelectMap);
         // map mapCurrent = mapa(3);
-        printMap(mapCurrent);
+        printMap(mapCurrent, hConsole);
         currentPosition = gameSaved.player.position;
         newPosition = gameSaved.player.position;
         player = gameSaved.player;
@@ -285,13 +285,13 @@ void loopPlayer(Game &gameSaved)
         {
             gameSaved.unlockAchievements[i] = AllAchievements().achievements[i];
         }
-
+        mapCurrent.themeColor = Gamemap::padrao;
         seed = generateSeed();
         SelectMap = Seed(0, 0, seed);
         // selecionando a sala inicial
         mapa(mapCurrent, SelectMap);
         // map mapCurrent = mapa(3);
-        printMap(mapCurrent);
+        printMap(mapCurrent, hConsole);
         currentPosition = {3, 3};
         newPosition = {3, 3};
         player = Player();
@@ -329,9 +329,19 @@ void loopPlayer(Game &gameSaved)
                 printBossRoom();
                 swapMap = false;
             }
+            else if (gameSaved.roomsMoved > 20)
+            {
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                system("cls");
+                DWORD themeColor = Gamemap::azul;
+                printMap(mapCurrent, hConsole);
+            }
+            else if (gameSaved.roomsMoved > 30)
+            {
+            }
             else
             {
-                printMap(mapCurrent);
+                printMap(mapCurrent, hConsole);
                 updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
                 swapMap = false;
                 SetConsoleCursorPosition(hConsole, player.position);

@@ -10,7 +10,7 @@ struct Gamemap
     enemy enemyList[maxEnemy];
     bool boss = false; // WIP
 
-    //Tamanho máximo do mapa e outras funções sobre
+    // Tamanho máximo do mapa e outras funções sobre
     int map[16][16] = {};
     enum mapSpawnPositions
     {
@@ -19,7 +19,7 @@ struct Gamemap
         left,
         right,
     };
-    //Todas as coisas usadas na criação do mapa
+    // Todas as coisas usadas na criação do mapa
     enum entities
     {
         floor = 0,
@@ -33,12 +33,21 @@ struct Gamemap
         portaLat = 92,
         vazio = 9,
         armadilha = 21,
+        escada,
     };
     entities entity;
     Position spawnPos[4];
-    void clearEnemyRoom(){
-        for(int i = 0; i < maxEnemy; i++){
+    void clearEnemyRoom()
+    {
+        for (int i = 0; i < maxEnemy; i++)
+        {
             enemyList[i] = {};
         }
     }
+    static const DWORD padrao = (0 << 4) | 7;    /* Define o mapa para printar fundo preto e escrita branca */
+    static const DWORD branco = (0 << 4) | 15;   /* Define o mapa para printar fundo preto e escrita branca */
+    static const DWORD amarelo = (0 << 4) | 14;  /* Define o mapa para printar fundo preto e escrita amarela */
+    static const DWORD azul = (0 << 4) | 9;      /* Define o mapa para printar fundo preto e escrita azul */
+    static const DWORD vermelho = (0 << 4) | 12; /* Define o mapa para printar fundo preto e escrita vermelha */
+    DWORD themeColor = padrao;                   /* Define para começar na cor padrão */
 };
