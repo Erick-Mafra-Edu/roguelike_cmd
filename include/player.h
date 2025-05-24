@@ -85,6 +85,7 @@ struct Nick
 // Struct do Save do jogo
 struct Game
 {
+    int indexPlayer = 0;
     Nick nick[100] = {Nick()};
     Player player;
     int XpPoints;
@@ -105,7 +106,7 @@ struct Game
         // matou o boss
         victory,
     };
-    int baseEnemyDamage = 10;
+
     Position inMap;
     ReturnTypes returnType = start;
     short int points[100] = {};
@@ -241,11 +242,11 @@ void hudPrint(Player player, int points)
 }
 // boss já foi acertado?
 bool bossAlreadyHit;
-
 // Todo o jogo está aqui dentro
 void loopPlayer(Game &gameSaved)
 {
 
+    SetConsoleTitle("RogueLike Game");
     // Definição e iniciação das principais variáveis
     int StartTime = time(NULL);
     int seed;
@@ -265,7 +266,7 @@ void loopPlayer(Game &gameSaved)
         short int x = gameSaved.inMap.x;
         short int y = gameSaved.inMap.y;
         seed = gameSaved.seed;
-        SelectMap = Seed(x, y, seed);
+        SelectMap = Seed(y, x, seed);
         // selecionando a sala do Save
         mapa(mapCurrent, SelectMap);
         // map mapCurrent = mapa(3);
@@ -288,6 +289,7 @@ void loopPlayer(Game &gameSaved)
         mapCurrent.themeColor = Gamemap::padrao;
         seed = generateSeed();
         SelectMap = Seed(0, 0, seed);
+        gameSaved.roomsMoved = 0;
         // selecionando a sala inicial
         mapa(mapCurrent, SelectMap);
         // map mapCurrent = mapa(3);
@@ -297,7 +299,7 @@ void loopPlayer(Game &gameSaved)
         player = Player();
         player.inventory.size = 0;
         player.position = newPosition;
-        inMap = {2, 2};
+        inMap = {0, 0};
     }
 
     char playerChar = player.playerChar;
@@ -316,7 +318,7 @@ void loopPlayer(Game &gameSaved)
         }
 
         currentPosition = newPosition;
-        hudPrint(player, gameSaved.points[0]);
+        hudPrint(player, gameSaved.points[gameSaved.indexPlayer]);
 
         // printMap(mapCurrent);
 
@@ -358,7 +360,7 @@ void loopPlayer(Game &gameSaved)
             gameSaved.player = player;
             gameSaved.map = mapCurrent;
             gameSaved.seed = seed;
-            gameSaved.points[0] += (time(NULL) - StartTime) / 30;
+            gameSaved.points[gameSaved.indexPlayer] += (time(NULL) - StartTime) / 30;
             gameSaved.returnType = Game::exit;
         }
         a = getch();
@@ -388,7 +390,7 @@ void loopPlayer(Game &gameSaved)
                 gameSaved.player = player;
                 gameSaved.map = mapCurrent;
                 gameSaved.seed = seed;
-                gameSaved.points[0] += (time(NULL) - StartTime) % 30;
+                gameSaved.points[gameSaved.indexPlayer] += (time(NULL) - StartTime) % 30;
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::inventory;
                 break;
@@ -396,7 +398,7 @@ void loopPlayer(Game &gameSaved)
                 gameSaved.player = player;
                 gameSaved.map = mapCurrent;
                 gameSaved.seed = seed;
-                gameSaved.points[0] += (time(NULL) - StartTime) % 30;
+                gameSaved.points[gameSaved.indexPlayer] += (time(NULL) - StartTime) % 30;
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::saved;
                 break;
@@ -490,7 +492,7 @@ void loopPlayer(Game &gameSaved)
                                 "|-----|\n";
                             potion.midX = 7 / 2;
                             potion.midY = 10;
-                            potion.heal = (gameSaved.baseEnemyDamage / 2) + (rand() % 50 + 10);
+                            potion.heal = (gameSaved.map.baseEnemyDamage / 2) + (rand() % 50 + 10);
                             descriptionItems(potion);
                             player.inventory.items[player.inventory.size++] = potion;
                             break;
@@ -522,7 +524,7 @@ void loopPlayer(Game &gameSaved)
                                         "              \"\n";
                             sword.midX = 16 / 2;
                             sword.midY = 19 / 2;
-                            sword.damage = (rand() % 10 + 5);
+                            sword.damage = ((rand() % 10 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(sword);
                             player.inventory.items[player.inventory.size++] = sword;
                             player.damage += sword.damage;
@@ -550,7 +552,7 @@ void loopPlayer(Game &gameSaved)
                                          "|=================|\n";
                             shield.midX = 19 / 2;
                             shield.midY = 15 / 2;
-                            shield.defense = (rand() % 10 + 5);
+                            shield.defense = ((rand() % 10 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(shield);
                             player.inventory.items[player.inventory.size++] = shield;
                             player.shield += shield.defense;
@@ -566,7 +568,7 @@ void loopPlayer(Game &gameSaved)
                                         "    \\        /   \n"
                                         "     `._,._,'\n";
                             apple.midX = 15 / 2;
-                            apple.heal = (rand() % 10 + 5);
+                            apple.heal = ((rand() % 10 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(apple);
                             player.inventory.items[player.inventory.size++] = apple;
                             break;
@@ -577,13 +579,13 @@ void loopPlayer(Game &gameSaved)
                             kunai.type = Items::weapon;
                             kunai.art =
                                 " /\\\n",
-                            "/__\\\n",
+                            "/  \\\n",
                             " ||\n",
                             " ||\n",
-                            "/__\\\n";
+                            "/  \\\n";
                             kunai.midX = 4 / 2;
                             kunai.midY = 3 / 2;
-                            kunai.damage = (rand() % 5 + 5);
+                            kunai.damage = ((rand() % 5 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(kunai);
                             player.inventory.items[player.inventory.size++] = kunai;
                             player.damage += kunai.damage;
@@ -604,7 +606,7 @@ void loopPlayer(Game &gameSaved)
                                 "    /__\\\n";
                             shovel.midX = 11 / 2;
                             shovel.midY = 10 / 2;
-                            shovel.damage = (rand() % 5 + 5);
+                            shovel.damage = (rand() % (gameSaved.map.baseEnemyDamage / 2) + (gameSaved.map.baseEnemyDamage / 3));
                             descriptionItems(shovel);
                             player.inventory.items[player.inventory.size++] = shovel;
                             player.damage += shovel.damage;
@@ -613,15 +615,16 @@ void loopPlayer(Game &gameSaved)
                         case 7:
                         {
                             Items goldenapple;
-                            goldenapple.type = Items::consumables;
+                            goldenapple.type = Items::goldenApple;
                             goldenapple.art = "     ,--./,-.\n"
                                               "    / #      \\\n"
                                               "   |          |\n"
                                               "    \\        /   \n"
                                               "     `._,._,'\n";
                             goldenapple.midX = 15 / 2;
-                            goldenapple.damage = (rand() % 10 + 5);
-                            goldenapple.heal = (rand() % 50 + 10);
+                            goldenapple.damage = (rand() % (gameSaved.map.baseEnemyDamage / 2) * (gameSaved.map.baseEnemyDamage / 2));
+                            goldenapple.heal = (rand() % (gameSaved.map.baseEnemyDamage / 2) * (gameSaved.map.baseEnemyDamage / 3));
+                            goldenapple.color = (0 << 4) | 14;
                             descriptionItems(goldenapple);
                             player.inventory.items[player.inventory.size++] = goldenapple;
                         }
@@ -690,7 +693,21 @@ void loopPlayer(Game &gameSaved)
             {
                 if (mapCurrent.enemyList[i].health > 0 && mapCurrent.enemyList[i].position.x == newPosition.X && mapCurrent.enemyList[i].position.y == newPosition.Y)
                 {
-                    player.health -= (mapCurrent.enemyList[i].damage - player.shield); // Adicionando dano do inimigo ao player
+                    if (mapCurrent.enemyList[i].damage > player.shield)
+                    {
+                        player.health -= (mapCurrent.enemyList[i].damage - player.shield); // Adicionando dano do inimigo ao player
+                    }
+                    else
+                    {
+                        player.health -= 1;
+                    }
+                    SetConsoleTextAttribute(hConsole, 4);
+                    SetConsoleCursorPosition(hConsole, {(SHORT)player.position.X, (SHORT)player.position.Y});
+                    cout << "X";
+                    Sleep(100);
+                    SetConsoleTextAttribute(hConsole, ((0 << 4) | 7));
+                    SetConsoleCursorPosition(hConsole, {(SHORT)player.position.X, (SHORT)player.position.Y});
+                    cout << playerChar;
                 }
             }
             // verifica se o player atacou o inimigo
@@ -736,8 +753,8 @@ void loopPlayer(Game &gameSaved)
                                     if (boss.health <= 0)
                                     {
                                         // updateBoss will handle clearing the art and marking position as -1
-                                        gameSaved.XpPoints += 500;  // pontos por matar o boss
-                                        gameSaved.points[0] += 500; // pontos por ter matado o boss
+                                        gameSaved.XpPoints += 500;                      // pontos por matar o boss
+                                        gameSaved.points[gameSaved.indexPlayer] += 500; // pontos por ter matado o boss
                                         gameSaved.returnType = Game::victory;
                                     }
                                     bossAlreadyHit = true; // Mark boss as hit for this attack swing
@@ -756,7 +773,7 @@ void loopPlayer(Game &gameSaved)
                                         if (mapCurrent.enemyList[i].position.x != 0 && mapCurrent.enemyList[i].position.y != 0)
                                             cout << ' ';
                                         gameSaved.XpPoints += 10 + rand() % 10;
-                                        gameSaved.points[0] += 10;
+                                        gameSaved.points[gameSaved.indexPlayer] += 10;
                                         mapCurrent.map[mapCurrent.enemyList[i].position.y][mapCurrent.enemyList[i].position.x] = mapCurrent.entities::floor;
                                     }
                                 }

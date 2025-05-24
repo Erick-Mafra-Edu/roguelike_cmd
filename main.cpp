@@ -68,13 +68,15 @@ int main()
     int selectMenu;
     game.returnType = Game::start;
     int indexNick = readSave(game);
+    game.indexPlayer = indexNick;
+
     do
     {
         if (game.returnType == Game::victory)
         {
             drawVictoryScreen();
-            game = Game();
-            game.player = Player();
+            saveGame(game);
+            game.indexPlayer++;
             game.returnType = Game::start;
         }
         if (game.returnType == Game::inventory)
@@ -87,8 +89,7 @@ int main()
         {
             game.returnType = Game::start;
             saveGame(game);
-            game = Game();
-            game.player = Player();
+            game.indexPlayer++;
         }
         if (game.returnType == Game::start || game.returnType == Game::saved)
             selectMenu = menu();
@@ -101,7 +102,6 @@ int main()
                 game.nick[indexNick] = SetNick();
             }
             loopPlayer(game);
-
             break;
         case 1: // "Informações" foi selecionadas
             system("cls");

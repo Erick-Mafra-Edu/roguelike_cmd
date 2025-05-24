@@ -16,9 +16,10 @@ int generateSeed()
     srand(time(NULL));
     return rand() % 999999;
 }
-int enemyHealth = 10, enemyDamage = 10;
+
 void definedMap(Gamemap &currentMap, short int newMap[16][16])
 {
+
     int amount = 0;
     currentMap.clearEnemyRoom(); // Garante que a lista de inimigos está limpa
 
@@ -29,8 +30,8 @@ void definedMap(Gamemap &currentMap, short int newMap[16][16])
             currentMap.map[i][j] = newMap[i][j];
         }
     }
-    enemyHealth += rand() % 5 + 1; // Adiciona dificuldade ao inimigos progressivamente
-    enemyDamage += rand() % 5 + 1; // Adiciona dificuldade ao inimigos progressivamente
+    currentMap.baseEnemyDamage += (rand() % 2 + 1);                  // Adiciona dificuldade ao inimigos progressivamente
+    int enemyHealth = currentMap.baseEnemyDamage / (rand() % 2 + 1); // Adiciona dificuldade ao inimigos progressivamente
     for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 16; j++)
@@ -45,7 +46,8 @@ void definedMap(Gamemap &currentMap, short int newMap[16][16])
                 currentMap.map[i][j] = currentMap.entities::enemy; // Coloca o inimigo visualmente no mapa
                 currentMap.enemyList[amount] = enemy();            // Adiciona um novo inimigo à lista
                 currentMap.enemyList[amount].health = enemyHealth;
-                currentMap.enemyList[amount].damage = enemyDamage;
+                currentMap.enemyList[amount].damage = currentMap.baseEnemyDamage;
+                ;
 
                 // Define a posição do inimigo na lista.
                 // ATENÇÃO: COORD usa X, Y. No loop, j é coluna (X) e i é linha (Y).
