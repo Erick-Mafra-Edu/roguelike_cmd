@@ -20,7 +20,7 @@ struct Player
     COORD position = {0, 0};
     Inventory inventory;
 
-    int health = 100, shield = 0, damage = 10;
+    int health = 100, shield = 0, damage = 10, maxhealth = 100;
     void setPosition(int x, int y)
     {
         thread Steep(SteepSound);
@@ -88,8 +88,8 @@ struct Game
     int indexPlayer = 0;
     Nick nick[100] = {Nick()};
     Player player;
-    int XpPoints;
-    short int level;
+    int SkillPoints = 0;
+    short int level = 1;
     Gamemap map;
     achievements unlockAchievements[16] = {achievements()};
     int seed;
@@ -103,7 +103,7 @@ struct Game
         start,
         // jogo salvo Uso Atual é quando abre o inventario
         saved,
-        // matou o boss
+        // passou as 20 salar
         victory,
     };
 
@@ -112,6 +112,13 @@ struct Game
     short int points[100] = {};
     short int roomsMoved = 0;
 };
+#include "./levelUpScreen.cpp"
+int levelUp(Game &game)
+{
+    int nextLevel = 50 * game.level + 10 * (game.level * game.level);
+    game.SkillPoints += (1 + game.level / 2);
+    return nextLevel;
+}
 // Adiciona decrição para o item adquirido
 void descriptionItems(Items &item)
 {
@@ -211,8 +218,10 @@ void armadilhaSound()
     Beep(1000, 50); // aumento de tensão
     Beep(300, 80);  // som grave tipo pancada
 }
-// Exibi o Hud do player
-void hudPrint(Player player, int points)
+// para definir quando o jogar upa para o próximo nível
+
+// Exibe o Hud do player
+void hudPrint(Game gameSaved, int points, int nextLevel)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO windowSize;
@@ -220,28 +229,44 @@ void hudPrint(Player player, int points)
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)1});
     cout << "|====================|";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)2});
-    cout << "|Vida: 100 / " << player.health << "  ";
+    cout << "|Vida: 100 / " << gameSaved.player.health << "    ";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)3});
     cout << "|--------------------|";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)4});
-    cout << "|Inventário: 10 / " << player.inventory.size;
+    cout << "|Inventário: 10 / " << gameSaved.player.inventory.size << "   ";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)5});
     cout << "|--------------------|";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)6});
-    cout << "|Dano do jogador: " << player.damage;
+    cout << "|Dano do jogador: " << gameSaved.player.damage << "   ";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)7});
     cout << "|--------------------|";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)8});
-    cout << "|Defesa do jogador: " << player.shield;
+    cout << "|Def. do jogador: " << gameSaved.player.shield << "   ";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)9});
     cout << "|--------------------|";
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)10});
     cout << "|Pontuação: " << points;
     SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)11});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)12});
+    cout << "|Nível: " << gameSaved.level;
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)13});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)14});
+    cout << "|Xp: " << points << " / " << nextLevel;
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)15});
+    cout << "|--------------------|";
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)16});
+    cout << "|P.H.: " << gameSaved.SkillPoints;
+    SetConsoleCursorPosition(hConsole, {(SHORT)(windowSize.dwSize.X - 23), (SHORT)17});
     cout << "|====================|";
 }
 // boss já foi acertado?
 bool bossAlreadyHit;
+
+// bot deve jogar por você?
+bool IAgame = false;
+
 // Todo o jogo está aqui dentro
 void loopPlayer(Game &gameSaved)
 {
@@ -306,8 +331,17 @@ void loopPlayer(Game &gameSaved)
     bool swapMap;
     int a;
     bool passado = false, armadilha = false; // variaveis para o controle da armadilha
+    int nextLevel = levelUp(gameSaved);
     while (gameSaved.returnType == Game::start)
     {
+        if (gameSaved.points[gameSaved.indexPlayer] >= nextLevel)
+        {
+            gameSaved.level++;
+            player.maxhealth += 10;
+            player.health += (((player.health * 100) / player.maxhealth) / 100 * player.health);
+            nextLevel = levelUp(gameSaved);
+        }
+
         SetConsoleCursorPosition(hConsole, player.position);
         SetConsoleTextAttribute(hConsole, player.color);
         cout << playerChar;
@@ -318,28 +352,91 @@ void loopPlayer(Game &gameSaved)
         }
 
         currentPosition = newPosition;
-        hudPrint(player, gameSaved.points[gameSaved.indexPlayer]);
-
-        // printMap(mapCurrent);
+        gameSaved.player = player;
+        hudPrint(gameSaved, gameSaved.points[gameSaved.indexPlayer], nextLevel);
 
         SetConsoleCursorPosition(hConsole, {0, 0});
         if (swapMap)
         {
-            if (gameSaved.roomsMoved > 10)
+            if (gameSaved.roomsMoved > 10 && gameSaved.map.bossHasKilled == false)
             {
                 system("cls");
                 printBossRoom();
                 swapMap = false;
             }
-            else if (gameSaved.roomsMoved > 20)
+            else if (gameSaved.roomsMoved >= 12 && gameSaved.map.bossHasKilled == true && gameSaved.roomsMoved < 16)
             {
                 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 system("cls");
-                DWORD themeColor = Gamemap::azul;
+                mapCurrent.themeColor = Gamemap::azul;
                 printMap(mapCurrent, hConsole);
+                swapMap = false;
             }
-            else if (gameSaved.roomsMoved > 30)
+            else if (gameSaved.roomsMoved >= 17 && gameSaved.roomsMoved < 22 && gameSaved.map.bossHasKilled == true)
             {
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                system("cls");
+                mapCurrent.themeColor = Gamemap::vermelho;
+                printMap(mapCurrent, hConsole);
+                swapMap = false;
+            }
+            else if (gameSaved.roomsMoved >= 16 && gameSaved.roomsMoved < 17 && gameSaved.map.bossHasKilled == true)
+            {
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                CONSOLE_SCREEN_BUFFER_INFO windowSize;
+                GetConsoleScreenBufferInfo(hConsole, &windowSize);
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)0});
+                cout << "██████████████████████";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)1});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)2});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)3});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)4});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)5});
+                cout << "█         H          █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)6});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)7});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)8});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)9});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)10});
+                cout << "██████████████████████";
+                swapMap = false;
+            }
+            else if (gameSaved.roomsMoved >= 22 && gameSaved.roomsMoved < 23 && gameSaved.map.bossHasKilled == true)
+            {
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                CONSOLE_SCREEN_BUFFER_INFO windowSize;
+                GetConsoleScreenBufferInfo(hConsole, &windowSize);
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)0});
+                cout << "██████████████████████";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)1});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)2});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)3});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)4});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)5});
+                cout << "█         H          █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)6});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)7});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)8});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)9});
+                cout << "█                    █";
+                SetConsoleCursorPosition(hConsole, {(SHORT)(0), (SHORT)10});
+                cout << "██████████████████████";
+                swapMap = false;
             }
             else
             {
@@ -350,6 +447,7 @@ void loopPlayer(Game &gameSaved)
                 cout << playerChar;
             }
         }
+
         // Caso o player morra
         if (player.health <= 0)
         {
@@ -363,14 +461,93 @@ void loopPlayer(Game &gameSaved)
             gameSaved.points[gameSaved.indexPlayer] += (time(NULL) - StartTime) / 30;
             gameSaved.returnType = Game::exit;
         }
-        a = getch();
+        if (!IAgame)
+        {
+            a = getch();
+        }
+        else
+        {
+            bool hasEnemiesArround = false;
+            for (short int i = 0; i < mapCurrent.maxEnemy; i++)
+            {
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        COORD attackedCoord = {(SHORT)(currentPosition.X + x), (SHORT)(currentPosition.Y + y)};
+                        if (mapCurrent.enemyList[i].position.x == currentPosition.X + x && mapCurrent.enemyList[i].position.y == currentPosition.Y + y && mapCurrent.enemyList[i].health > 0)
+                        {
+                            if (mapCurrent.enemyList[i].health > 0)
+                            {
+                                a = 32;
+                                hasEnemiesArround = true;
+                                goto nextPass;
+                            }
+                            else
+                            {
+                                hasEnemiesArround = false;
+                            }
+                        }
+                        else
+                        {
+                            hasEnemiesArround = false;
+                        }
+                    }
+                }
+            }
+            if (!hasEnemiesArround)
+            {
+                // search Door
+                for (short int j = 0; j < 16; j++)
+                {
+                    for (short int i = 0; i < 16; i++)
+                    {
+                        if (mapCurrent.map[j][i] == Gamemap::portaLat || mapCurrent.map[j][i] == Gamemap::portaSupInf)
+                        {
+                            player.position.X > i ? newPosition.X-- : newPosition.X;
+                            player.position.Y > j ? newPosition.Y-- : newPosition.Y;
+                            if (mapCurrent.map[newPosition.Y][newPosition.X] == Gamemap::parede)
+                            {
+                                cout << "True";
+                                for (int x = -1; x < 2; x++)
+                                {
+                                    for (int y = -1; y < 2; y++)
+                                    {
+                                        if (mapCurrent.map[newPosition.Y + y][newPosition.X + x] == Gamemap::floor || mapCurrent.map[newPosition.Y + y][newPosition.X + x] == Gamemap::portaLat || mapCurrent.map[newPosition.Y + y][newPosition.X + x] == Gamemap::portaLat)
+                                        {
+                                            newPosition.X += x;
+                                            newPosition.Y += y;
+                                            cout << newPosition.X << " " << newPosition.Y;
+                                            goto nextPass;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "False";
+                            }
+                            goto nextPass;
+                        }
+                    }
+                }
 
+            nextPass:
+                a = getch();
+            }
+        }
         if (a)
         {
             // cout<<player.inventory.size;
             switch (a)
             {
-
+            case 'u':
+            case 'U':
+                system("cls");
+                levelUpScreen(gameSaved);
+                system("cls");
+                printMap(mapCurrent, hConsole);
+                break;
             // start movimentação do player
             case 119:
                 newPosition.Y > 0 ? newPosition.Y-- : newPosition.Y;
@@ -402,13 +579,16 @@ void loopPlayer(Game &gameSaved)
                 gameSaved.inMap = inMap;
                 gameSaved.returnType = Game::saved;
                 break;
-
+            case 'I':
+            case 'i':
+                IAgame ? IAgame = false : IAgame = true;
+                break;
             default:
                 // debugPrint(hConsole, mapCurrent, newPosition, a);
                 // mapCurrent.boss = true;
                 break;
             }
-            if (gameSaved.roomsMoved <= 10)
+            if (gameSaved.roomsMoved <= 10 || gameSaved.roomsMoved > 11)
             {
                 switch (mapCurrent.map[newPosition.Y][newPosition.X])
                 {
@@ -457,6 +637,17 @@ void loopPlayer(Game &gameSaved)
                         currentPosition = {2, 2};
                     }
                     break;
+                case mapCurrent.entities::escada:
+                {
+                    gameSaved.roomsMoved++;
+                    swapMap = true;
+                    inMap.x++;
+                    inMap.y++;
+                    SelectMap = Seed(inMap.y, inMap.x, seed);
+                    mapa(mapCurrent, SelectMap);
+                    currentPosition = {2, 2};
+                }
+                break;
                 case mapCurrent.entities::item:
                     /*item*/
                     break;
@@ -495,6 +686,7 @@ void loopPlayer(Game &gameSaved)
                             potion.heal = (gameSaved.map.baseEnemyDamage / 2) + (rand() % 50 + 10);
                             descriptionItems(potion);
                             player.inventory.items[player.inventory.size++] = potion;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 2:
@@ -528,6 +720,7 @@ void loopPlayer(Game &gameSaved)
                             descriptionItems(sword);
                             player.inventory.items[player.inventory.size++] = sword;
                             player.damage += sword.damage;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 3:
@@ -556,6 +749,7 @@ void loopPlayer(Game &gameSaved)
                             descriptionItems(shield);
                             player.inventory.items[player.inventory.size++] = shield;
                             player.shield += shield.defense;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 4:
@@ -571,6 +765,7 @@ void loopPlayer(Game &gameSaved)
                             apple.heal = ((rand() % 10 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(apple);
                             player.inventory.items[player.inventory.size++] = apple;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 5:
@@ -578,17 +773,18 @@ void loopPlayer(Game &gameSaved)
                             Items kunai;
                             kunai.type = Items::weapon;
                             kunai.art =
-                                " /\\\n",
-                            "/  \\\n",
-                            " ||\n",
-                            " ||\n",
-                            "/  \\\n";
+                                " /\\ \n",
+                            "/  \\ \n",
+                            " || \n",
+                            " || \n",
+                            "/  \\ \n";
                             kunai.midX = 4 / 2;
                             kunai.midY = 3 / 2;
                             kunai.damage = ((rand() % 5 + 5) * (gameSaved.map.baseEnemyDamage / 2));
                             descriptionItems(kunai);
                             player.inventory.items[player.inventory.size++] = kunai;
                             player.damage += kunai.damage;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 6:
@@ -610,6 +806,7 @@ void loopPlayer(Game &gameSaved)
                             descriptionItems(shovel);
                             player.inventory.items[player.inventory.size++] = shovel;
                             player.damage += shovel.damage;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
                             break;
                         }
                         case 7:
@@ -627,6 +824,8 @@ void loopPlayer(Game &gameSaved)
                             goldenapple.color = (0 << 4) | 14;
                             descriptionItems(goldenapple);
                             player.inventory.items[player.inventory.size++] = goldenapple;
+                            gameSaved.points[gameSaved.indexPlayer] += 20;
+                            break;
                         }
                         default:
                             break;
@@ -737,7 +936,7 @@ void loopPlayer(Game &gameSaved)
                         for (int y = -1; y < 2; y++)
                         {
                             COORD attackedCoord = {(SHORT)(currentPosition.X + x), (SHORT)(currentPosition.Y + y)};
-                            if (gameSaved.roomsMoved > 10)
+                            if (gameSaved.roomsMoved > 10 && gameSaved.roomsMoved < 12)
                             {
                                 enemy &boss = mapCurrent.enemyList[0];                                                                     // Get reference
                                 bool isWithinBossBounds = (attackedCoord.X >= boss.position.x && attackedCoord.X <= boss.position.x + 4 && // Check X range
@@ -752,10 +951,18 @@ void loopPlayer(Game &gameSaved)
                                     // Check if boss died from this hit
                                     if (boss.health <= 0)
                                     {
+                                        short int rapX = 0;
+                                        short int rapY = 0;
+                                        CONSOLE_SCREEN_BUFFER_INFO windowInfo;
                                         // updateBoss will handle clearing the art and marking position as -1
-                                        gameSaved.XpPoints += 500;                      // pontos por matar o boss
+                                        gameSaved.SkillPoints += 500;                   // pontos por matar o boss
                                         gameSaved.points[gameSaved.indexPlayer] += 500; // pontos por ter matado o boss
-                                        gameSaved.returnType = Game::victory;
+                                        GetConsoleScreenBufferInfo(hConsole, &windowInfo);
+                                        rapX = windowInfo.dwSize.X / 2;
+                                        rapY = windowInfo.dwSize.Y / 2;
+                                        SetConsoleCursorPosition(hConsole, {rapX, rapY});
+                                        cout << "H";
+                                        gameSaved.map.bossHasKilled = true;
                                     }
                                     bossAlreadyHit = true; // Mark boss as hit for this attack swing
                                 }
@@ -772,7 +979,7 @@ void loopPlayer(Game &gameSaved)
                                         SetConsoleCursorPosition(hConsole, {(SHORT)mapCurrent.enemyList[i].position.x, (SHORT)mapCurrent.enemyList[i].position.y});
                                         if (mapCurrent.enemyList[i].position.x != 0 && mapCurrent.enemyList[i].position.y != 0)
                                             cout << ' ';
-                                        gameSaved.XpPoints += 10 + rand() % 10;
+                                        // gameSaved.SkillPoints += 10 + rand() % 10;
                                         gameSaved.points[gameSaved.indexPlayer] += 10;
                                         mapCurrent.map[mapCurrent.enemyList[i].position.y][mapCurrent.enemyList[i].position.x] = mapCurrent.entities::floor;
                                     }
@@ -784,7 +991,21 @@ void loopPlayer(Game &gameSaved)
             }
 
             // Verifica se a nova posição é válida antes de mover
-
+            if (getCharAtPosition(hConsole, newPosition) == 'H')
+            {
+                gameSaved.roomsMoved++;
+                swapMap = true;
+                inMap.x++;
+                inMap.y++;
+                SelectMap = Seed(inMap.y, inMap.x, seed);
+                mapa(mapCurrent, SelectMap);
+                currentPosition = {2, 2};
+            }
+            if (getCharAtPosition(hConsole, newPosition) == 'H' && gameSaved.roomsMoved >= 22)
+            {
+                gameSaved.points[gameSaved.indexPlayer] += 500;
+                gameSaved.returnType = Game::victory;
+            }
             if (getCharAtPosition(hConsole, newPosition) != ' ' && getCharAtPosition(hConsole, newPosition) != '\u0023')
             {
                 newPosition = currentPosition;
@@ -802,11 +1023,11 @@ void loopPlayer(Game &gameSaved)
                 passado = false;
             }
         }
-        if (gameSaved.roomsMoved <= 10)
+        if (gameSaved.roomsMoved <= 10 || gameSaved.map.bossHasKilled)
         {
             updateMoveEnemies(mapCurrent, {player.position.X, player.position.Y}, hConsole);
         }
-        else
+        else if (gameSaved.roomsMoved > 10 && !gameSaved.map.bossHasKilled)
         {
             updateBoss(mapCurrent, player.position, hConsole, player.health);
         }

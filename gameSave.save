@@ -1,81 +1,16 @@
 [Roguelike ASCII]
 [Player]
-Health	-1
-Damage	77
-Position	5	4
+Health	-8
+Damage	10
+Position	2	1
 Shield	0
 [Inventory]
-Size	3
+Size	0
 [Items]
-Type	3
-Quantity	1
-Durability	0
-Damage	2
-Defense	0
-Heal	0
-Art	   ______
-  /      \
- |        |
- |___  ___|
-     ||
-     ||
-     ||
-    /__\
-
-MidX	5
-MidY	5
-Description	Esta espada brilha como o próprio sol nascente, irradiando calor mesmo na escuridão mais densa.	Ao tocar a carne, suas chamas se espalham e consomem o inimigo pouco a pouco.	Dano:2
-Type	3
-Quantity	1
-Durability	0
-Damage	48
-Defense	0
-Heal	0
-Art	      .         
-     /:\    (""")
-     |:|     III
-     |:|     III
-     |:|     III
-     |:|   __III__
-     |:| /:-.___,-:\
-     |:| \]  |:|  [/
-     |:|     |:|
-     |:|     |:|
-     |:|     |:|
- /]  |:|  [\ |:|
- \:-'"""`-:/ |:|
-   ""III""   |:|
-     III     |:|
-     III     |:|
-     III     |:|
-    (___)    \:/
-              "
-
-MidX	8
-MidY	9
-Description	Forjada com aço temperado em ódio e banhada em sombras eternas, ela emite um sussurro constante	A cada balanço, uma presença invisível parece acompanhar o corte, trazendo desespero ao campo de batalha.	Dano:48
-Type	3
-Quantity	1
-Durability	0
-Damage	3
-Defense	0
-Heal	0
-Art	   ______
-  /      \
- |        |
- |___  ___|
-     ||
-     ||
-     ||
-    /__\
-
-MidX	5
-MidY	5
-Description	Uma espada envolta em névoa negra. Cada golpe dela rouba um fragmento da alma do inimigo.	Dano:3	
 [Game]
-Seed	19986
+Seed	21264
 ReturnType	2
-inMap	2	1
-Rooms Moved	5
-Points	112
+inMap	0	0
+Rooms Moved	1
+Points	23
 Nick	LOL

@@ -117,8 +117,8 @@ int main()
             cout << "- '\u00A4' é um baú (ou um mímico!).\n";
             cout << "- '\u2588' são paredes (você não pode passar delas).\n";
             cout << "- '|' e '-' são portas.\n\n";
-            cout << "Objetivo: Sobreviva ao máximo de tempo possível (quanto mais tempo se passa dentro da dungeon, mais difícil fica), \n";
-            cout << "mate o máximo de inimigos possíveis e derrote o Boss para conseguir a maior quantidade de pontos possível.\n";
+            cout << "Objetivo: Sobreviva ao máximo de tempo possível, mate o máximo de inimigos possíveis e derrote o Boss. \n";
+            cout << "Passe dos 22 andares dessa dungeon maldita\n";
             cout << "Cálculo de pontos: tempo + abates + boss.\n\n";
             cout << "Pressione qualquer tecla para retornar ao menu...";
             getch(); // Aguardando uma tecla ser pressionada

@@ -325,7 +325,7 @@ void ItemsMenu(Inventory &inventory, Player &player)
                     player.health += inventory.items[move].heal;
                 }
                 player.health += inventory.items[move].heal;
-                player.health > 100 ? player.health = 100 : player.health;
+                player.health > player.maxhealth ? player.health = player.maxhealth : player.health;
                 OrganizationInventory(inventory, move);
                 Draw(clearString, 30);
                 ClearDescription(midY, windowInfo);

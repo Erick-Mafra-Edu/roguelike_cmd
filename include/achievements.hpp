@@ -1,11 +1,11 @@
 #ifndef achievements_h
 #define achievements_h
 #include <string>
-using namespace std;
+
 struct achievements
 {
-    string name = "";
-    string description = "";
+    std::string name = "";
+    std::string description = "";
     bool unlocked = false;
 };
 struct AllAchievements

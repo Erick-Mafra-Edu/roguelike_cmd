@@ -2,7 +2,7 @@
 #include "./enemy.h"
 #include <windows.h>
 #include "./achievements.hpp"
-
+#include "./dificulty.hpp"
 #include <ctime>
 
 int Seed(int y, int x, int seed)
@@ -17,9 +17,8 @@ int generateSeed()
     return rand() % 999999;
 }
 
-void definedMap(Gamemap &currentMap, short int newMap[16][16])
+void definedMap(Gamemap &currentMap, short int newMap[16][16], float dificuldade)
 {
-
     int amount = 0;
     currentMap.clearEnemyRoom(); // Garante que a lista de inimigos está limpa
 
@@ -59,7 +58,7 @@ void definedMap(Gamemap &currentMap, short int newMap[16][16])
     }
 };
 
-// Responsável por definir no mapa o que cada coisa é
+// Responsável por printar o mapa, de forma que seja acessível ao jogador
 void printMap(Gamemap &mapCurrent, HANDLE hConsole)
 {
     SetConsoleTextAttribute(hConsole, mapCurrent.themeColor); // Define a cor tema
@@ -399,6 +398,7 @@ void mapa(Gamemap &newMap, short int mapSelect)
         {1, 21, 11, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 91, 91, 1, 1, 1, 1, 1, 1, 1}};
+
     short int SalaL1[16][16] = {
         {1, 1, 91, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9, 9, 9},
@@ -452,63 +452,46 @@ void mapa(Gamemap &newMap, short int mapSelect)
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    short int saida[16][16] = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
     // Seleção da matriz mapa para printar no terminal
     switch (mapSelect)
     {
     case 1:
-        definedMap(newMap, inicial1);
+        definedMap(newMap, inicial1, 0);
         break;
     case 2:
-        definedMap(newMap, inicial2);
+        definedMap(newMap, inicial2, 0);
         break;
     case 3:
-        definedMap(newMap, inicial3);
+        definedMap(newMap, inicial3, 0);
     case 4:
-        definedMap(newMap, inicial4);
+        definedMap(newMap, inicial4, 0);
         break;
     case 5:
-        definedMap(newMap, SalaP1);
+        definedMap(newMap, SalaP1, 0);
         break;
     case 6:
-        definedMap(newMap, SalaP2);
+        definedMap(newMap, SalaP2, 0);
         break;
     case 7:
-        definedMap(newMap, SalaM1);
+        definedMap(newMap, SalaM1, 0);
         break;
     case 8:
-        definedMap(newMap, SalaM2);
+        definedMap(newMap, SalaM2, 0);
         break;
     case 9:
-        definedMap(newMap, SalaG1);
+        definedMap(newMap, SalaG1, 0);
         break;
     case 10:
-        definedMap(newMap, SalaG2);
+        definedMap(newMap, SalaG2, 0);
         break;
     case 11:
-        definedMap(newMap, SalaG3);
+        definedMap(newMap, SalaG3, 0);
         break;
     case 12:
-        definedMap(newMap, SalaL1);
+        definedMap(newMap, SalaL1, 0);
         break;
     case 13:
-        definedMap(newMap, SalaL2);
+        definedMap(newMap, SalaL2, 0);
         break;
     default:
         break;

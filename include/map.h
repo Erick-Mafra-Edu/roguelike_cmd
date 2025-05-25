@@ -1,6 +1,5 @@
 #include "./primitiveTypes.h"
 #include "./enemy.h"
-
 using namespace std;
 
 // Toda a criação do tipo map
@@ -8,7 +7,7 @@ struct Gamemap
 {
     static const short int maxEnemy = 4; // inimigos máximos por sala
     enemy enemyList[maxEnemy];
-    bool boss = false; // WIP
+    bool bossHasKilled = false;
     int baseEnemyDamage = 5;
     // Tamanho máximo do mapa e outras funções sobre
     int map[16][16] = {};
